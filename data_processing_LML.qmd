@@ -1,0 +1,28 @@
+---
+title: "Data cleaning and processing code"
+author: "Leah Lariscy"
+format: html
+editor: visual
+---
+
+## Load necessary packages here
+
+```{r}
+library(tidyverse)
+library(skimr)
+```
+
+## Load the data here
+
+```{r}
+# Load CFX N1 data
+n1 <- read_csv("data/raw_data/n1_data.csv")
+# Load CFX N2 data
+n2 <- read_csv("data/raw_data/n2_data.csv")
+# Load Plant data
+plant <- read_csv("data/raw_data/plant_data.csv")
+# Load Standard curve data
+std_curve <- read_csv("data/raw_data/standard_curves.csv")
+# Load 
+read_csv("data/raw_data/")
+```
