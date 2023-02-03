@@ -10,3 +10,7 @@ The last version has the advantage of having code in one place for easy writing/
 
 Each way of doing this is a reasonable approach, pick whichever one you prefer or makes the most sense for your setup. Whichever approach you choose, add ample documentation/commentary so you and others can easily understand what's going on and what is done.
 
+--------------------------------------------------------------------------------
+THIS SECTION ADDED BY LEAH LARISCY
+
+For my project, data processing code can be found in `data_processing_LML.qmd` which is saved in the `processing_code` folder.

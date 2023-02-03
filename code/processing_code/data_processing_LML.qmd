@@ -1,0 +1,121 @@
+---
+title: "Data cleaning and processing script"
+author: "Leah Lariscy"
+format: html
+editor: visual
+---
+
+## Data introduction
+
+For this project, I would like to work with my own real-world data to explore the relationship between SARS-CoV-2 waste water surveillance data and COVID-19 clinical case data.
+
+### Hypotheses so far
+
+Waste water surveillance data will begin to correlate less with the clinical data as we progress further into the pandemic. (as rapid, at-home testing becomes more prevalent)
+
+Catchment-level surveillance data will correlate better to waste water catchment-level case data than it will with county-level data.
+
+## Load necessary packages here
+
+```{r}
+library(tidyverse)
+library(skimr)
+library(here)
+```
+
+## Load the data here
+
+```{r}
+here()
+# Load CFX N1 data
+n1 <- read_csv(here("data/raw_data/cfx_n1.csv"))
+
+# Load CFX N2 data
+n2 <- read_csv(here("data/raw_data/cfx_n2.csv"))
+
+# Load Plant data
+plant <- read_csv(here("data/raw_data/plant_data.csv"))
+
+# Load COVID-19 Symptom data
+covid_symptom <- read_csv(here("data/raw_data/ga_covid_data/epicurve_symptom_date.csv")) %>% 
+  filter(county=="Clarke") %>% 
+  select(symptom.date=`symptom date`, 
+         cases, moving_avg_cases)
+
+#Load COVID-19 Confirmed Case Data
+covid_case <- read_csv(here("data/raw_data/ga_covid_data/epicurve_rpt_date.csv")) %>% 
+  filter(county=="Clarke") %>% 
+  select(report_date, 
+         cases, 
+         moving_avg_cases)
+
+#Load COVID-19 Testing Data
+covid_testing <- read_csv(here("data/raw_data/ga_covid_data/pcr_antigen_col.csv")) %>% 
+  filter(county=="Clarke") %>% 
+  select(collection_date = collection_dt, 
+         pcr_tests = `ALL PCR tests performed`, 
+         pcr_pos = `All PCR positive tests`, 
+         pcr_pos_7dma = `7 day percent positive`,
+         pcr_pos_14dma = `14 day percent positive`)
+
+#Load Catchment-level COVID-19 Case Data
+#covid_case_wrf = read_csv(here("data/raw_data/cases_wrf.csv"))
+```
+
+## Description of the data
+
+### CFX N1 Data
+
+`n1` \<- Waste water extracted RNA RT-qPCR results of SARS-CoV-2 N1 gene target
+
+```{r}
+skim(n1)
+```
+
+### CFX N2 Data
+
+`n2` \<- Waste water extracted RNA RT-qPCR results of SARS-CoV-2 N2 gene target
+
+```{r}
+skim(n2)
+```
+
+### Plant Data
+
+`plant` \<- Flow data from three Water Reclamation Facilities (WRF) in Athens-Clarke County (ACC).
+
+```{r}
+skim(plant)
+```
+
+### County-level COVID-19 Symptom Data
+
+`covid_symptom` \<- Count of individuals who reported having symptoms of COVID-19 on a given day, subset to include only data from ACC. Accessed from Georgia Department of Public Health (GDPH) on 2023-01-31.
+
+```{r}
+skim(covid_symptom)
+```
+
+### County-level COVID-19 Case Data
+
+`covid_case` \<- Count of confirmed cases of COVID-19 on a given day, subset to include only data from ACC. Accessed from GDPH on 2023-01-31.
+
+```{r}
+skim(covid_case)
+```
+
+### County-level COVID-19 Testing Data
+
+`covid_testing` \<- Count of COVID-19 tests administered on a given day, subset to include only data from ACC. Accessed from GDPH on 2023-01-31.
+
+```{r}
+skim(covid_testing)
+```
+
+### Catchment-level COVID-19 Case Data
+
+`covid_case_wrf` \<- Count of confirmed cases of COVID-19 on a given day from each WRF catchment zone in ACC.
+
+```{r}
+#I don't have access to this data yet, waiting on DPH partner to send.
+```
