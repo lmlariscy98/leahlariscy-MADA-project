@@ -93,10 +93,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="data_processing_LML_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="data_processing_LML_files/libs/quarto-html/anchor.min.js"></script>
 <link href="data_processing_LML_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="data_processing_LML_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="data_processing_LML_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="data_processing_LML_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="data_processing_LML_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="data_processing_LML_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="data_processing_LML_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 
 
 </head>
@@ -132,11 +132,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="data-introduction" class="level2">
 <h2 class="anchored" data-anchor-id="data-introduction">Data introduction</h2>
-<p>For this project, I would like to work with my own real-world data to explore the relationship between SARS-CoV-2 waste water surveillance data and COVID-19 clinical case data.</p>
+<p>For this project, I would like to work with my own real-world data to explore the relationship between <strong>SARS-CoV-2 waste water surveillance data</strong> and <strong>COVID-19 clinical case data</strong>.</p>
 <section id="hypotheses-so-far" class="level3">
 <h3 class="anchored" data-anchor-id="hypotheses-so-far">Hypotheses so far</h3>
-<p>Waste water surveillance data will begin to trend less with the clinical data as we progress further into the pandemic. (as rapid, at-home testing becomes more prevalent)</p>
-<p>Catchment-level surveillance data will correlate better to waste water catchment-level case data than it will with county-level data.</p>
+<p>Waste water surveillance data will begin to correlate less with the clinical data as we progress further into the pandemic. (as rapid, at-home testing becomes more prevalent)</p>
+<p>Catchment-level surveillance data will correlate better to waste water catchment-level case data than it will with county-level data because people are more likely to poop at their own house and SARS-CoV-2 particles are shed more often in feces than they are in urine (Kim et al.&nbsp;2020).</p>
 </section>
 </section>
 <section id="load-necessary-packages-here" class="level2">
@@ -1336,6 +1336,22 @@ date (1): collection_dt
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#I don't have access to this data yet, waiting on DPH partner to send.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
+<section id="data-cleaning-and-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-and-wrangling">Data cleaning and wrangling</h2>
+<p>Currently, I have 7 unique sets of data. In order to do analysis on the data down the road, I want to figure out how to best combine these data sets.</p>
+<p>Here is a list of the data sets I have:</p>
+<ol type="1">
+<li>CFX N1 results</li>
+<li>CFX N2 results</li>
+<li>Plant flow and total suspended solids</li>
+<li>County-level COVID symptoms</li>
+<li>County-level COVID confirmed cases</li>
+<li>County-level COVID tests administered</li>
+<li>Catchment-level COVID confirmed cases</li>
+</ol>
+<p>I will start by combining the CFX output data with the plant flow data.</p>
+<p>Next, I will combine all COVID-related data.</p>
 </section>
 
 </main>

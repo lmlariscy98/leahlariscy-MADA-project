@@ -3,17 +3,18 @@ title: "Data cleaning and processing script"
 author: "Leah Lariscy"
 format: html
 editor: visual
+theme: solar
 ---
 
 ## Data introduction
 
-For this project, I would like to work with my own real-world data to explore the relationship between SARS-CoV-2 waste water surveillance data and COVID-19 clinical case data.
+For this project, I would like to work with my own real-world data to explore the relationship between **SARS-CoV-2 waste water surveillance data** and **COVID-19 clinical case data**.
 
 ### Hypotheses so far
 
 Waste water surveillance data will begin to correlate less with the clinical data as we progress further into the pandemic. (as rapid, at-home testing becomes more prevalent)
 
-Catchment-level surveillance data will correlate better to waste water catchment-level case data than it will with county-level data.
+Catchment-level surveillance data will correlate better to waste water catchment-level case data than it will with county-level data because people are more likely to poop at their own house and SARS-CoV-2 particles are shed more often in feces than they are in urine (Kim et al. 2020).
 
 ## Load necessary packages here
 
@@ -118,4 +119,96 @@ skim(covid_testing)
 
 ```{r}
 #I don't have access to this data yet, waiting on DPH partner to send.
+```
+
+## Data cleaning and wrangling
+
+Currently, I have 7 unique sets of data. In order to do analysis on the data down the road, I want to figure out how to best combine these data sets.
+
+Here is a list of the data sets I have:
+
+1.  CFX N1 results
+2.  CFX N2 results
+3.  Plant flow and total suspended solids
+4.  County-level COVID symptoms
+5.  County-level COVID confirmed cases
+6.  County-level COVID tests administered
+7.  Catchment-level COVID confirmed cases
+
+I will start by combining the CFX output data with the plant flow data and calling the dataframe `wbe`
+
+Next, I will combine all COVID-related data
+
+### Calculate SARS-CoV-2 concentrations from CFX data for both N1 and N2
+
+```{r}
+#N1 data here
+n1 <- n1 %>% mutate(ct = as.numeric(ct), 
+              copy_num_uL_rxn = as.numeric(10^((ct-36.046)/-3.5293)), #use standard curve slope here
+              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004)) #replace NAs with limit of detection (0.004 copies per uL of the reaction)
+
+#N2 data here (because they have different standard curve equations)
+n2 <- n2 %>% mutate(ct = as.numeric(ct),
+              copy_num_uL_rxn = as.numeric(10^((ct-37.731)/-3.2505)),
+              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004))
+              
+```
+
+### Combining and cleaning CFX data
+
+```{r}
+
+wbe_year2 <- bind_rows(n1, n2) %>% #combine dataframes with same number of rows
+  mutate(
+    date=as.Date(sample_date, format = "%d-%b-%y"), #change to date format
+    facility=substr(sample_id, 1,2), #first two letters in sample_id is facility ID
+    biological_replicate=substr(sample_id, nchar(sample_id), nchar(sample_id)), #last number in sample_id is the replicate number
+    ct=as.numeric(ifelse(ct=="Undetermined", NA, ct)) #set NAs
+  ) %>% 
+  arrange(date, facility, target, biological_replicate) %>% 
+  select(date, facility, target, biological_replicate, collection_num, ct, copy_num_uL_rxn) %>%
+  mutate(facility = as.factor(facility), facility = recode(facility, NO = "A", MI = "B", CC = "C"), facility = ordered(facility, levels = c("A", "B", "C"))) %>% #set facility to factor and then set factor levels
+  filter(between(date, as.Date("2021-07-06") , as.Date("2022-12-21"))) 
+```
+
+### Cleaning plant data
+
+```{r}
+plant_clean <- plant %>% 
+  mutate(date = as.Date(date, format = "%m/%d/%Y"), #change to date format
+         influent_flow_L = influent_flow_mg*1e6*231*(0.0254^3)*1000) %>%  #convert flow 
+  mutate(facility = as.factor(wrf), facility = recode(facility, NO = "A", MI = "B", CC = "C"), facility = ordered(facility, levels = c("A", "B", "C"))) %>% #set facility to factor and then set factor levels
+   select(date, facility, influent_flow_L, influent_tss_mg_l)
+
+```
+
+### Combining CFX and plant data
+
+```{r}
+n1_n2_plant <- left_join(wbe_year2, plant_clean, by = c("date","facility"))
+```
+
+### Combining all COVID data
+
+```{r}
+covid <- full_join(
+  covid%>%
+    select(cases.symptom.onset=cases, date=symptom.date), 
+  covid.report%>%
+    select(cases.reported=cases, date=report_date), 
+  by = "date"
+) %>% 
+  full_join(
+    covid.testing%>%
+      rename(date=collection_date), 
+    by="date"
+  ) %>%
+  select(date, cases.symptom.onset, cases.reported, pcr_tests, pcr_pos, pcr_pos_7dma, pcr_pos_14dma) 
+  #full_join(cases.wrf, by = "date")
+```
+
+### Combining `n1_n2_plant` and `covid` 
+
+```{r}
+all_data <- full_join(n1_n2_plant, covid, by = "date")
 ```
