@@ -1,0 +1,211 @@
+---
+title: "Exploratory analysis of year 2 surveillance data"
+author: "Leah Lariscy"
+format: html
+editor: visual
+theme: solar
+---
+
+## Load necessary packages
+
+```{r}
+library(tidyverse)
+library(here)
+library(ggpmisc)
+
+```
+
+## Load data frames generated in data processing script
+
+```{r}
+here()
+n1_n2_clean <- readRDS(here("data/processed_data/year2_cfx_clean.rds"))
+plant_clean <- readRDS(here("data/processed_data/year2_plant_clean.rds"))
+n1_n2_plant_combine <- readRDS(here("data/processed_data/year2_cfx_plant_combined.rds"))
+covid_combine <- readRDS(here("data/processed_data/all_covid_combined.rds"))
+all_data_combine <- readRDS(here("data/processed_data/year2_all_data_combined.rds"))
+recovery_percent <- readRDS(here("data/processed_data/recovery_percentages.rds"))
+
+
+
+```
+
+### Look at `all_data_combine` and determine visualization to make
+
+```{r}
+tibble(all_data_combine)
+```
+
+## Data Viz
+
+Some plots I want to generate initially are
+
+1.  Case averages over time
+2.  Total copies over time (N1 and N2)
+
+### Look at case average over time
+
+```{r}
+all_data_combine %>% group_by(date) %>% 
+  summarize(mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ggplot(aes(x=date, y=mean_7dma)) +
+  geom_point() +
+ stat_smooth(method = "gam")
+
+```
+
+### Look at log10 total copies in wastewater over time for N1
+
+First, average total copies of biological replicates. Then, add total copies from each facility.
+
+```{r}
+all_data_combine %>% filter(target == "N1") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_total_copies = mean(total_copies)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_total_copies = sum(mean_total_copies)) %>% 
+  ggplot(aes(x = date,y = log10(sum_total_copies))) +
+  geom_point(color = "red") +
+  stat_smooth(method = "gam")
+
+```
+
+### Look at log10 total copies in wastewater over time for N2
+
+```{r}
+all_data_combine %>% filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_total_copies = mean(total_copies)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_total_copies = sum(mean_total_copies)) %>% 
+  ggplot(aes(date, log10(sum_total_copies))) +
+  geom_point() +
+  stat_smooth(method = "gam")
+```
+
+### Log10 total copies per day for N1 and N2
+
+```{r}
+all_data_combine %>% 
+  drop_na() %>% 
+  group_by(date, target, facility) %>% 
+  summarize(mean_total_copies = mean(total_copies)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_total_copies = sum(mean_total_copies)) %>% 
+  ggplot(aes(date, log10(sum_total_copies), color = target)) +
+  geom_point() +
+  stat_smooth(method = "gam")
+```
+
+### Look at log10 copies per L in N1
+
+```{r}
+all_data_combine %>% filter(target == "N1") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
+  ggplot(aes(date, log10(sum_mean_copies_L))) +
+  geom_point() +
+  stat_smooth(method = "gam")
+```
+
+### Look at log10 copies per liter in N1
+
+```{r}
+all_data_combine %>% filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
+  ggplot(aes(date, log10(sum_mean_copies_L))) +
+  geom_point() +
+  stat_smooth(method = "gam")
+```
+
+### Look at log10 copies per liter across both N1 and N2
+
+```{r}
+all_data_combine %>% #filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
+  ggplot(aes(date, log10(sum_mean_copies_L))) +
+ stat_smooth(method = "gam")
+```
+
+### Look at log10 copies per liter vs case 7dma
+
+```{r}
+all_data_combine %>% #filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L), 
+            mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L),
+            mean_7dma = mean(mean_7dma)) %>% 
+  ggplot(aes(log10(sum_mean_copies_L), mean_7dma)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq()
+```
+
+### Look at log10 copies of N1 per liter vs case 7dma
+
+```{r}
+all_data_combine %>% filter(target == "N1") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L), 
+            mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L),
+            mean_7dma = mean(mean_7dma)) %>% 
+  ggplot(aes(log10(sum_mean_copies_L), mean_7dma)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq()
+```
+
+### Look at log10 copies of N2 per liter vs case 7dma
+
+```{r}
+all_data_combine %>% filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L), 
+            mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L),
+            mean_7dma = mean(mean_7dma)) %>% 
+  ggplot(aes(log10(sum_mean_copies_L), mean_7dma)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq()
+```
+
+### Look at relationship of copies/L and 7dma over time
+
+```{r}
+all_data_combine %>% #filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(copy_num_L), 
+            mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L),
+            mean_7dma = mean(mean_7dma)) %>% 
+  ggplot(aes(x=date)) +
+  #geom_point(aes(y=log10(sum_mean_copies_L)/mean_7dma)) + 
+  geom_line(aes(y=(log10(sum_mean_copies_L)/mean_7dma), color = "red")) +
+  geom_line(aes(y=log10(mean_7dma)), color = "blue")
+
+
+```
