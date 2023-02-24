@@ -25,12 +25,12 @@ n1_n2_plant_combine <- readRDS(here("data/processed_data/year2_cfx_plant_combine
 covid_combine <- readRDS(here("data/processed_data/all_covid_combined.rds"))
 all_data_combine <- readRDS(here("data/processed_data/year2_all_data_combined.rds"))
 recovery_percent <- readRDS(here("data/processed_data/recovery_percentages.rds"))
-
+n1_n2n2_avg <- readRDS(here("data/processed_data/year2_cfx_avg.rds"))
 
 
 ```
 
-### Look at `all_data_combine` and determine visualization to make
+### Look at `all_data_combine`
 
 ```{r}
 tibble(all_data_combine)
@@ -38,12 +38,66 @@ tibble(all_data_combine)
 
 ## Data Viz
 
-Some plots I want to generate initially are
+### Variation analysis
 
-1.  Case averages over time
-2.  Total copies over time (N1 and N2)
+Graphs to make:
 
-### Look at case average over time
+-   histogram of case count observations
+
+-   histogram of 7 day moving average case observations
+
+-   histogram of total daily copies
+
+-   histogram of copies per L
+
+-   histogram of percent positive qPCR assays
+
+### Co-variation analysis
+
+Graphs to make:
+
+#### Histogram of clinical case 7 day moving average
+
+```{r}
+covid_combine %>% ggplot(aes(pcr_pos_7dma)) +
+  geom_histogram()
+summary(covid_combine$pcr_pos_7dma)
+```
+
+#### Histogram of PCR positive clinical cases
+
+```{r}
+covid_combine %>% ggplot(aes(pcr_pos)) +
+  geom_histogram()
+summary(covid_combine$pcr_pos)
+```
+
+#### Histogram of clinical case 14 day moving average
+
+```{r}
+covid_combine %>% ggplot(aes(pcr_pos_14dma)) +
+  geom_histogram()
+summary(covid_combine$pcr_pos_14dma)
+```
+
+#### Histogram of total daily viral copies at county level
+
+```{r}
+sum_daily_copies_county <- all_data_combine %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_total_copies = mean(total_copies)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_total_copies = sum(mean_total_copies))
+  
+  sum_daily_copies_county %>% ggplot(aes(log10(sum_total_copies))) +
+  geom_histogram()
+
+  log10_sum_daily_copies <- log10(sum_daily_copies_county$sum_total_copies)
+  summary(log10_sum_daily_copies)
+```
+
+### Look at case 7 day moving average over time
 
 ```{r}
 all_data_combine %>% group_by(date) %>% 
@@ -54,32 +108,37 @@ all_data_combine %>% group_by(date) %>%
 
 ```
 
-### Look at log10 total copies in wastewater over time for N1
-
-First, average total copies of biological replicates. Then, add total copies from each facility.
+Case 7 day moving average overtime, bar plot and GAM model
 
 ```{r}
-all_data_combine %>% filter(target == "N1") %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_total_copies = mean(total_copies)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_total_copies = sum(mean_total_copies)) %>% 
-  ggplot(aes(x = date,y = log10(sum_total_copies))) +
-  geom_point(color = "red") +
-  stat_smooth(method = "gam")
+all_data_combine %>% group_by(date) %>% 
+  summarize(mean_7dma = mean(pcr_pos_7dma),
+            mean_pcr_pos = mean(pcr_pos)) %>% 
+  ggplot(aes(x = date, y = mean_7dma)) +
+  geom_bar(stat = "identity", color = '#634490') +
+  stat_smooth(method = "gam", color = 'black') 
 
 ```
 
-### Look at log10 total copies in wastewater over time for N2
+PCR positives per day over time, bar plot and GAM model
 
 ```{r}
-all_data_combine %>% filter(target == "N2") %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_total_copies = mean(total_copies)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_total_copies = sum(mean_total_copies)) %>% 
+all_data_combine %>% group_by(date) %>% 
+  summarize(mean_pcr_pos = mean(pcr_pos)) %>% 
+  ggplot(aes(x = date, y = mean_pcr_pos)) +
+  geom_bar(stat = "identity", color = '#634490') +
+  stat_smooth(method = "gam", color = 'black') 
+```
+
+### Look at log10 total copies in wastewater over time (avg N1/N2)
+
+```{r}
+all_data_combine %>% #filter(target == "N2") %>% 
+  #drop_na() %>% #remove NAs from analysis
+  group_by(date, facility) %>% #this will allow me to average the two targets
+  summarize(mean_total_copies = mean(total_copies)) %>% #average across N1 and N2
+  ungroup(facility) %>% #need to do this so I can add the avg total copies of each WRF
+  summarize(sum_total_copies = sum(mean_total_copies)) %>% #total daily county copies
   ggplot(aes(date, log10(sum_total_copies))) +
   geom_point() +
   stat_smooth(method = "gam")
@@ -89,11 +148,13 @@ all_data_combine %>% filter(target == "N2") %>%
 
 ```{r}
 all_data_combine %>% 
-  drop_na() %>% 
   group_by(date, target, facility) %>% 
+  drop_na(target) %>% 
   summarize(mean_total_copies = mean(total_copies)) %>% 
   ungroup(facility) %>% 
   summarize(sum_total_copies = sum(mean_total_copies)) %>% 
+  
+  
   ggplot(aes(date, log10(sum_total_copies), color = target)) +
   geom_point() +
   stat_smooth(method = "gam")
@@ -103,17 +164,19 @@ all_data_combine %>%
 
 ```{r}
 all_data_combine %>% filter(target == "N1") %>% 
-  drop_na() %>% 
+
   group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L)) %>% 
+  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
+ 
+  
   ggplot(aes(date, log10(sum_mean_copies_L))) +
   geom_point() +
   stat_smooth(method = "gam")
 ```
 
-### Look at log10 copies per liter in N1
+### Look at log10 copies per liter in N2
 
 ```{r}
 all_data_combine %>% filter(target == "N2") %>% 

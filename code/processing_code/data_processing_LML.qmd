@@ -10,11 +10,25 @@ theme: solar
 
 For this project, I would like to work with my own real-world data to explore the relationship between **SARS-CoV-2 waste water surveillance data** and **COVID-19 clinical case data**.
 
-### Hypotheses so far
+## Questions I have so far
 
-Waste water surveillance data will begin to correlate less with the clinical data as we progress further into the pandemic. (as rapid, at-home testing becomes more prevalent)
+### Variation
 
-Catchment-level surveillance data will correlate better to waste water catchment-level case data than it will with county-level data because people are more likely to poop at their own house and SARS-CoV-2 particles are shed more often in feces than they are in urine (Kim et al. 2020).
+1.  What is the distribution like of SARS-CoV-2 viral load observations? What does this distribution look like at catchment levels vs at the county level?
+2.  What is the distribution like of N1 and N2 qPCR percent positive observations? What does this distribution look like at catchment levels vs at the county level?
+3.  What is the distribution like of clinical case observations? What does this distribution look like at catchment levels vs at the county level?
+
+### Covariation
+
+1.  Is there a relationship between viral load and clinical case observations?
+
+2.  Is there a relationship between qPCR percent positive and clinical case observations?
+
+3.  What do viral load trends look like over time?
+
+4.  What do clinical case trends look like over time?
+
+5.  How do each of these temporal trends compare to one another over time?
 
 ## Load necessary packages here
 
@@ -145,7 +159,7 @@ Here is a list of the data sets I have:
 8.  CFX recovery input
 9.  CFX recovery output
 
-I will start by combining the CFX output data with the plant flow data and calling the dataframe `wbe`
+I will start by combining the CFX output data with the plant flow data and calling the data frame `wbe`
 
 Next, I will combine all COVID-related data
 
@@ -186,6 +200,16 @@ wbe_year2 <- bind_rows(n1, n2) %>% #combine dataframes with same number of rows
 saveRDS(wbe_year2, here("data/processed_data/year2_cfx_clean.rds"))
 ```
 
+### Summarizing CFX data for downstream processing
+
+```{r}
+wbe_year2_avg <- wbe_year2 %>% group_by(date,facility,target,collection_num) %>% 
+  summarize(avg_copy_L = mean(copy_num_L), 
+            avg_copy_uL_rxn = mean(copy_num_uL_rxn)) %>% 
+  ungroup()
+saveRDS(wbe_year2_avg, here("data/processed_data/year2_cfx_avg.rds"))
+```
+
 ### Cleaning plant data
 
 ```{r}
@@ -201,8 +225,8 @@ saveRDS(plant_clean, here("data/processed_data/year2_plant_clean.rds"))
 ### Combining CFX and plant data
 
 ```{r}
-n1_n2_plant <- left_join(wbe_year2, plant_clean, by = c("date","facility")) %>% 
-  mutate(total_copies = copy_num_L * influent_flow_L)
+n1_n2_plant <- left_join(wbe_year2_avg, plant_clean, by = c("date","facility")) %>% 
+  mutate(total_copies = avg_copy_L * influent_flow_L)
 
 saveRDS(n1_n2_plant, here("data/processed_data/year2_cfx_plant_combined.rds"))
 ```
