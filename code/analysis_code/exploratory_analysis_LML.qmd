@@ -12,6 +12,7 @@ theme: solar
 library(tidyverse)
 library(here)
 library(ggpmisc)
+library(ggthemes)
 
 ```
 
@@ -60,7 +61,12 @@ Graphs to make:
 
 ```{r}
 covid_combine %>% ggplot(aes(pcr_pos_7dma)) +
-  geom_histogram()
+  geom_histogram(fill = "#C06C84") +
+xlab(label = "Clinical Case Seven Day Moving Average") +
+ylab(label = "Count") +
+theme_light()
+
+ggsave(here("figures/exploratory/variate/7DMA_histo.png"))
 summary(covid_combine$pcr_pos_7dma)
 ```
 
@@ -68,7 +74,12 @@ summary(covid_combine$pcr_pos_7dma)
 
 ```{r}
 covid_combine %>% ggplot(aes(pcr_pos)) +
-  geom_histogram()
+  geom_histogram(fill = '#F8B195') +
+  xlab(label = "Daily Positive Clinical Cases") +
+  ylab(label = "Count") +
+  theme_light()
+  
+ggsave(here("figures/exploratory/variate/pos_cases_histo.png"))
 summary(covid_combine$pcr_pos)
 ```
 
@@ -85,27 +96,21 @@ summary(covid_combine$pcr_pos_14dma)
 ```{r}
 sum_daily_copies_county <- all_data_combine %>% 
   drop_na() %>% 
-  group_by(date, facility) %>% 
+  group_by(date, target, facility) %>% 
   summarize(mean_total_copies = mean(total_copies)) %>% 
   ungroup(facility) %>% 
   summarize(sum_total_copies = sum(mean_total_copies))
   
-  sum_daily_copies_county %>% ggplot(aes(log10(sum_total_copies))) +
-  geom_histogram()
-
+  sum_daily_copies_county %>% ggplot(aes(log10(sum_total_copies), fill = target)) +
+  geom_histogram() +
+      scale_fill_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+    xlab(label = "Log10 Total Daily County-Level Copies") +
+    ylab(label = "Count") +
+    theme_light()
+  
+ggsave(here("figures/exploratory/variate/total_copies_histo.png"))
   log10_sum_daily_copies <- log10(sum_daily_copies_county$sum_total_copies)
   summary(log10_sum_daily_copies)
-```
-
-### Look at case 7 day moving average over time
-
-```{r}
-all_data_combine %>% group_by(date) %>% 
-  summarize(mean_7dma = mean(pcr_pos_7dma)) %>% 
-  ggplot(aes(x=date, y=mean_7dma)) +
-  geom_point() +
- stat_smooth(method = "gam")
-
 ```
 
 Case 7 day moving average overtime, bar plot and GAM model
@@ -115,8 +120,13 @@ all_data_combine %>% group_by(date) %>%
   summarize(mean_7dma = mean(pcr_pos_7dma),
             mean_pcr_pos = mean(pcr_pos)) %>% 
   ggplot(aes(x = date, y = mean_7dma)) +
-  geom_bar(stat = "identity", color = '#634490') +
-  stat_smooth(method = "gam", color = 'black') 
+  geom_bar(stat = "identity", color = '#C06C84') +
+  stat_smooth(method = "gam", color = 'black') +
+  xlab(label = "Date") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/7DMA_time_plot.png"))
 
 ```
 
@@ -126,22 +136,32 @@ PCR positives per day over time, bar plot and GAM model
 all_data_combine %>% group_by(date) %>% 
   summarize(mean_pcr_pos = mean(pcr_pos)) %>% 
   ggplot(aes(x = date, y = mean_pcr_pos)) +
-  geom_bar(stat = "identity", color = '#634490') +
-  stat_smooth(method = "gam", color = 'black') 
+  geom_bar(stat = "identity", color = '#F8B195') +
+  stat_smooth(method = "gam", color = 'black') +
+  ylab(label = "Positive Cases Per Day") +
+  xlab(label = "Date") +
+  theme_light()
+  
+ggsave(here("figures/exploratory/covariate/pos_cases_time.png"))
 ```
 
 ### Look at log10 total copies in wastewater over time (avg N1/N2)
 
 ```{r}
 all_data_combine %>% #filter(target == "N2") %>% 
-  #drop_na() %>% #remove NAs from analysis
+  drop_na(target) %>% #remove NAs from analysis
   group_by(date, facility) %>% #this will allow me to average the two targets
   summarize(mean_total_copies = mean(total_copies)) %>% #average across N1 and N2
   ungroup(facility) %>% #need to do this so I can add the avg total copies of each WRF
   summarize(sum_total_copies = sum(mean_total_copies)) %>% #total daily county copies
   ggplot(aes(date, log10(sum_total_copies))) +
-  geom_point() +
-  stat_smooth(method = "gam")
+  geom_point(color = "#80256D") +
+  stat_smooth(method = "gam", color = "#80256D") +
+   xlab(label = "Date") +
+  ylab(label = "Log10 Total Daily County-Level Copies") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/n1_n2_avg_time.png"))
 ```
 
 ### Log10 total copies per day for N1 and N2
@@ -157,7 +177,13 @@ all_data_combine %>%
   
   ggplot(aes(date, log10(sum_total_copies), color = target)) +
   geom_point() +
-  stat_smooth(method = "gam")
+  stat_smooth(method = "gam") +
+  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+  xlab(label = "Date") +
+  ylab(label = "Log10 Total Daily County-Level Copies") +
+  theme_light()
+ 
+ ggsave(here("figures/exploratory/covariate/n1_n2_time.png"))
 ```
 
 ### Look at log10 copies per L in N1
@@ -182,7 +208,7 @@ all_data_combine %>% filter(target == "N1") %>%
 all_data_combine %>% filter(target == "N2") %>% 
   drop_na() %>% 
   group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L)) %>% 
+  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
   ggplot(aes(date, log10(sum_mean_copies_L))) +
@@ -195,12 +221,14 @@ all_data_combine %>% filter(target == "N2") %>%
 ```{r}
 all_data_combine %>% #filter(target == "N2") %>% 
   drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L)) %>% 
+  group_by(date, target, facility) %>% 
+  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
-  ggplot(aes(date, log10(sum_mean_copies_L))) +
- stat_smooth(method = "gam")
+  ggplot(aes(date, log10(sum_mean_copies_L),color = target)) +
+ stat_smooth(method = "gam") +
+  geom_point()
+
 ```
 
 ### Look at log10 copies per liter vs case 7dma
@@ -209,7 +237,7 @@ all_data_combine %>% #filter(target == "N2") %>%
 all_data_combine %>% #filter(target == "N2") %>% 
   drop_na() %>% 
   group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L), 
+  summarize(mean_copies_L = mean(avg_copy_L), 
             mean_7dma = mean(pcr_pos_7dma)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
@@ -226,7 +254,7 @@ all_data_combine %>% #filter(target == "N2") %>%
 all_data_combine %>% filter(target == "N1") %>% 
   drop_na() %>% 
   group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L), 
+  summarize(mean_copies_L = mean(avg_copy_L), 
             mean_7dma = mean(pcr_pos_7dma)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
@@ -243,7 +271,7 @@ all_data_combine %>% filter(target == "N1") %>%
 all_data_combine %>% filter(target == "N2") %>% 
   drop_na() %>% 
   group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L), 
+  summarize(mean_copies_L = mean(avg_copy_L), 
             mean_7dma = mean(pcr_pos_7dma)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
@@ -254,13 +282,56 @@ all_data_combine %>% filter(target == "N2") %>%
   stat_poly_eq()
 ```
 
+### Look at log10 total daily copies per 7DMA
+
+```{r}
+all_data_combine %>% #filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_daily_copies = mean(total_copies), 
+            mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies = sum(mean_daily_copies),
+            mean_7dma = mean(mean_7dma)) %>% 
+  ggplot(aes(log10(sum_mean_copies), mean_7dma)) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq() +
+  xlab(label = "Log10 Total Daily County-Level Copies") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/total_copies_avg_vs_7DMA.png"))
+```
+
+```{r}
+all_data_combine %>% 
+  drop_na() %>% 
+  group_by(date, target, facility) %>% 
+  summarize(mean_daily_copies = mean(total_copies), 
+            mean_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies = sum(mean_daily_copies),
+            mean_7dma = mean(mean_7dma)) %>% 
+  ggplot(aes(log10(sum_mean_copies), mean_7dma, color = target)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+  xlab(label = "Log10 Total Daily County-Level Copies") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/total_copies_vs_7DMA.png"))
+```
+
 ### Look at relationship of copies/L and 7dma over time
 
 ```{r}
 all_data_combine %>% #filter(target == "N2") %>% 
   drop_na() %>% 
   group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(copy_num_L), 
+  summarize(mean_copies_L = mean(avg_copy_L), 
             mean_7dma = mean(pcr_pos_7dma)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
@@ -271,4 +342,49 @@ all_data_combine %>% #filter(target == "N2") %>%
   geom_line(aes(y=log10(mean_7dma)), color = "blue")
 
 
+```
+
+### Log10 Daily copies N1 & N2 vs daily positive cases
+
+```{r}
+all_data_combine %>% 
+  drop_na() %>% 
+  group_by(date, target, facility) %>% 
+  summarize(mean_daily_copies = mean(total_copies), 
+            mean_pcr_pos = mean(pcr_pos)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies = sum(mean_daily_copies),
+            mean_pcr_pos = mean_pcr_pos) %>% 
+  ggplot(aes(log10(sum_mean_copies), mean_pcr_pos, color = target)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+  xlab(label = "Log10 Total Daily County-Level Copies") +
+  ylab(label = "Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/total_copies_vs_pcr_pos.png"))
+```
+
+### Log10 Daily copies average vs daily positive cases
+
+```{r}
+all_data_combine %>% 
+  drop_na() %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_daily_copies = mean(total_copies), 
+            mean_pcr_pos = mean(pcr_pos)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies = sum(mean_daily_copies),
+            mean_pcr_pos = mean_pcr_pos) %>% 
+  ggplot(aes(log10(sum_mean_copies), mean_pcr_pos)) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq() +
+  xlab(label = "Log10 Total Daily County-Level Copies") +
+  ylab(label = "Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/total_copies_avg_vs_pcr_pos.png"))
 ```
