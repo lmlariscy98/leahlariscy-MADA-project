@@ -301,3 +301,63 @@ recovery_calc <- left_join(recovery_output_clean, recovery_input_clean, by = "cg
 
 saveRDS(recovery_calc, here("data/processed_data/recovery_percentages.rds"))
 ```
+
+### Calculate percent positive of technical reps
+
+```{r}
+wbe_tr <- wbe_year2 %>% group_by(date, facility, target, biological_replicate) %>% 
+  dplyr::summarise(
+    n=n(), 
+    n.miss=sum(is.na(ct)), 
+    ct.mean=mean(ct,na.rm=T), 
+    ct.sd=sd(ct,na.rm=T)
+  ) %>% 
+  mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup() %>% 
+  mutate(n.pos = n - n.miss) %>% 
+  mutate(pos = ifelse(n.pos > 0, "pos", "neg"))
+wbe_tr
+saveRDS(wbe_tr,here("data/processed_data/wbe_technical_reps.rds"))
+```
+
+### Calculate percent positive per biological replicate
+
+```{r}
+wbe_br <- wbe_tr %>%
+  group_by(date, facility, target) %>% 
+  dplyr::summarise(
+    n.bio = n(),
+    n.bio.non.miss = sum(!is.na(ct.mean)),
+    n.bio.miss = sum(is.na(ct.mean)),
+    n.total = sum(n), 
+    n.total.miss = sum(n.miss), 
+    bio.ct.mean = mean(ct.mean, na.rm = T), 
+    bio.ct.sd = sd(ct.mean, na.rm=T), 
+    tech.ct.dists = paste(paste0(biological_replicate, " = ", round(ct.mean,2), " (sd=", round(ct.sd,2), ", n=", n-n.miss, ")"), collapse = "; ")
+  ) %>%
+  mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup()
+wbe_br
+```
+
+### Calculate percent positive per sample
+
+```{r}
+wbe_samp <- wbe_br %>%
+  group_by(date, facility, target) %>% 
+  dplyr::summarise(
+    n.pos = sum(!is.na(bio.ct.mean)),
+    n.miss = sum(is.na(bio.ct.mean))) %>%
+  mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup() %>% 
+  mutate(prop.pos = n.pos/(n.pos+n.miss)*100)
+wbe_samp
+```
+
+```{r}
+ggstatsplot::ggbarstats(
+  data = wbe_samp,
+  x = n.pos,
+  y = target) +
+  labs(caption = NULL)
+```

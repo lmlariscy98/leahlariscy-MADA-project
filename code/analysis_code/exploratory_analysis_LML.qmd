@@ -37,7 +37,7 @@ n1_n2n2_avg <- readRDS(here("data/processed_data/year2_cfx_avg.rds"))
 tibble(all_data_combine)
 ```
 
-## Data Viz
+# Data Viz
 
 ### Variation analysis
 
@@ -57,7 +57,9 @@ Graphs to make:
 
 Graphs to make:
 
-#### Histogram of clinical case 7 day moving average
+## Single variate analysis
+
+### Clinical case 7 day moving average histogram
 
 ```{r}
 covid_combine %>% ggplot(aes(pcr_pos_7dma)) +
@@ -70,7 +72,7 @@ ggsave(here("figures/exploratory/variate/7DMA_histo.png"))
 summary(covid_combine$pcr_pos_7dma)
 ```
 
-#### Histogram of PCR positive clinical cases
+### PCR positive clinical cases histogram
 
 ```{r}
 covid_combine %>% ggplot(aes(pcr_pos)) +
@@ -83,15 +85,19 @@ ggsave(here("figures/exploratory/variate/pos_cases_histo.png"))
 summary(covid_combine$pcr_pos)
 ```
 
-#### Histogram of clinical case 14 day moving average
+### Clinical case 14 day moving average histogram
 
 ```{r}
 covid_combine %>% ggplot(aes(pcr_pos_14dma)) +
-  geom_histogram()
+  geom_histogram(fill = "#FF7E5A")
+
 summary(covid_combine$pcr_pos_14dma)
+
+ggsave(here("figures/exploratory/variate/14DMA_histo.png"))
+
 ```
 
-#### Histogram of total daily viral copies at county level
+### Total copies in WW at county level histogram
 
 ```{r}
 sum_daily_copies_county <- all_data_combine %>% 
@@ -113,31 +119,54 @@ ggsave(here("figures/exploratory/variate/total_copies_histo.png"))
   summary(log10_sum_daily_copies)
 ```
 
-Case 7 day moving average overtime, bar plot and GAM model
+### Copies per liter histogram
+
+```{r}
+all_data_combine %>% #filter(target == "N2") %>% 
+  drop_na() %>% 
+  group_by(date, target, facility) %>% 
+  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
+  
+  ggplot(aes(log10(sum_mean_copies_L), fill = target)) +
+  geom_histogram() +
+      scale_fill_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+    xlab(label = "Log10 Copies Per Liter") +
+    ylab(label = "Count") +
+    theme_light()
+
+ggsave(here("figures/exploratory/variate/copies_L_histo.png"))
+
+```
+
+## Co-variate analysis: time series
+
+### Case 7 day moving average overtime, bar plot and GAM model
 
 ```{r}
 all_data_combine %>% group_by(date) %>% 
   summarize(mean_7dma = mean(pcr_pos_7dma),
             mean_pcr_pos = mean(pcr_pos)) %>% 
   ggplot(aes(x = date, y = mean_7dma)) +
-  geom_bar(stat = "identity", color = '#C06C84') +
-  stat_smooth(method = "gam", color = 'black') +
+  geom_point(color = '#C06C84') +
+  geom_line(color = '#C06C84') +
   xlab(label = "Date") +
-  ylab(label = "Clinical Case Seven Day Moving Average") +
+  ylab(label = "Clinical Case 7-Day Moving Average") +
   theme_light()
 
 ggsave(here("figures/exploratory/covariate/7DMA_time_plot.png"))
 
 ```
 
-PCR positives per day over time, bar plot and GAM model
+### PCR positives per day over time, bar plot and GAM model
 
 ```{r}
 all_data_combine %>% group_by(date) %>% 
   summarize(mean_pcr_pos = mean(pcr_pos)) %>% 
   ggplot(aes(x = date, y = mean_pcr_pos)) +
   geom_bar(stat = "identity", color = '#F8B195') +
-  stat_smooth(method = "gam", color = 'black') +
+  geom_line(color = 'black') +
   ylab(label = "Positive Cases Per Day") +
   xlab(label = "Date") +
   theme_light()
@@ -145,7 +174,23 @@ all_data_combine %>% group_by(date) %>%
 ggsave(here("figures/exploratory/covariate/pos_cases_time.png"))
 ```
 
-### Look at log10 total copies in wastewater over time (avg N1/N2)
+### Case 14 day moving average over time
+
+```{r}
+all_data_combine %>% group_by(date) %>% 
+  summarize(mean_14_dma = mean(pcr_pos_14dma)) %>% 
+ 
+   ggplot(aes(x = date, y = mean_14_dma)) +
+  geom_bar(stat = "identity", color = '#FF7E5A') +
+  stat_smooth(method = "gam", color = 'black') +
+  ylab(label = "Clinical Case 14-Day Moving Average") +
+  xlab(label = "Date") +
+  theme_light()
+  
+ggsave(here("figures/exploratory/covariate/14DMA_time.png"))
+```
+
+### Log10 total copies in wastewater over time (avg N1/N2)
 
 ```{r}
 all_data_combine %>% #filter(target == "N2") %>% 
@@ -156,15 +201,15 @@ all_data_combine %>% #filter(target == "N2") %>%
   summarize(sum_total_copies = sum(mean_total_copies)) %>% #total daily county copies
   ggplot(aes(date, log10(sum_total_copies))) +
   geom_point(color = "#80256D") +
-  stat_smooth(method = "gam", color = "#80256D") +
+  geom_line(color = "#80256D") +
    xlab(label = "Date") +
   ylab(label = "Log10 Total Daily County-Level Copies") +
   theme_light()
 
-ggsave(here("figures/exploratory/covariate/n1_n2_avg_time.png"))
+ggsave(here("figures/exploratory/covariate/avg_total_copies_time.png"))
 ```
 
-### Log10 total copies per day for N1 and N2
+### Log10 viral load in wastewater for N1 and N2
 
 ```{r}
 all_data_combine %>% 
@@ -177,64 +222,45 @@ all_data_combine %>%
   
   ggplot(aes(date, log10(sum_total_copies), color = target)) +
   geom_point() +
-  stat_smooth(method = "gam") +
+  geom_line() +
   scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
   xlab(label = "Date") +
-  ylab(label = "Log10 Total Daily County-Level Copies") +
-  theme_light()
+  ylab(label = "Log10 County-Level Viral Load") +
+  theme_light() +
+  facet_wrap(vars(target),nrow = 2)
  
- ggsave(here("figures/exploratory/covariate/n1_n2_time.png"))
+ ggsave(here("figures/exploratory/covariate/total_copies_time.png"))
 ```
 
-### Look at log10 copies per L in N1
+### Log10 copies per liter across time (both N1 and N2)
 
 ```{r}
-all_data_combine %>% filter(target == "N1") %>% 
-
-  group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
- 
-  
-  ggplot(aes(date, log10(sum_mean_copies_L))) +
-  geom_point() +
-  stat_smooth(method = "gam")
-```
-
-### Look at log10 copies per liter in N2
-
-```{r}
-all_data_combine %>% filter(target == "N2") %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
-  ggplot(aes(date, log10(sum_mean_copies_L))) +
-  geom_point() +
-  stat_smooth(method = "gam")
-```
-
-### Look at log10 copies per liter across both N1 and N2
-
-```{r}
-all_data_combine %>% #filter(target == "N2") %>% 
-  drop_na() %>% 
+all_data_combine %>%
+  drop_na(target) %>% 
   group_by(date, target, facility) %>% 
   summarize(mean_copies_L = mean(avg_copy_L)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
   ggplot(aes(date, log10(sum_mean_copies_L),color = target)) +
- stat_smooth(method = "gam") +
-  geom_point()
+geom_line() +
+  geom_point() + 
+  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+  xlab(label = "Date") +
+  ylab(label = "Log10 County-Level Copies Per Liter") +
+  theme_light() +
+    facet_wrap(vars(target),nrow = 2)
+
+ 
+ ggsave(here("figures/exploratory/covariate/copies_L_time.png"))
 
 ```
 
-### Look at log10 copies per liter vs case 7dma
+## Co-variate analysis: correlations between WW and clinical variables
+
+### Log10 copies per liter vs case 7DMA (N1/N2 average)
 
 ```{r}
-all_data_combine %>% #filter(target == "N2") %>% 
+all_data_combine %>% 
   drop_na() %>% 
   group_by(date, facility) %>% 
   summarize(mean_copies_L = mean(avg_copy_L), 
@@ -242,47 +268,86 @@ all_data_combine %>% #filter(target == "N2") %>%
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
             mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), mean_7dma)) +
-  geom_point() +
-  stat_poly_line() +
-  stat_poly_eq()
+  ggplot(aes(log10(sum_mean_copies_L), log10(mean_7dma))) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq(color = "#80256D") +
+   xlab(label = "Log10 County-Level Copies Per Liter") +
+  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/copies_L_avg_vs_7DMA.png"))
 ```
 
-### Look at log10 copies of N1 per liter vs case 7dma
+### Log10 copies per liter vs case 7DMA (N1 & N2)
 
 ```{r}
-all_data_combine %>% filter(target == "N1") %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
+all_data_combine %>%  
+  drop_na(target) %>% 
+  group_by(date, target, facility) %>% 
   summarize(mean_copies_L = mean(avg_copy_L), 
             mean_7dma = mean(pcr_pos_7dma)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
             mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), mean_7dma)) +
+  ggplot(aes(log10(sum_mean_copies_L), log10(mean_7dma), color = target)) +
   geom_point() +
   stat_poly_line() +
-  stat_poly_eq()
+  stat_poly_eq() +
+  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+  xlab(label = "Log10 County-Level Copies Per Liter") +
+  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/copies_L_vs_7DMA.png"))
 ```
 
-### Look at log10 copies of N2 per liter vs case 7dma
+### Log10 Copies per Liter vs daily clinical cases
 
 ```{r}
-all_data_combine %>% filter(target == "N2") %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
+all_data_combine %>%  
+  drop_na(target) %>% 
+  group_by(date, target, facility) %>% 
   summarize(mean_copies_L = mean(avg_copy_L), 
-            mean_7dma = mean(pcr_pos_7dma)) %>% 
+            mean_pcr_pos = mean(pcr_pos)) %>% 
   ungroup(facility) %>% 
   summarize(sum_mean_copies_L = sum(mean_copies_L),
-            mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), mean_7dma)) +
+            mean_pcr_pos = mean_pcr_pos) %>% 
+  ggplot(aes(log10(sum_mean_copies_L), log10(mean_pcr_pos), color = target)) +
   geom_point() +
   stat_poly_line() +
-  stat_poly_eq()
+  stat_poly_eq() +
+  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
+  xlab(label = "Log10 County-Level Copies Per Liter") +
+  ylab(label = "Log10 Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/copies_L_vs_pcr_pos.png"))
 ```
 
-### Look at log10 total daily copies per 7DMA
+### Log10 Copies per Liter vs daily clinical cases (N1 N2 average)
+
+```{r}
+all_data_combine %>%  
+  drop_na(target) %>% 
+  group_by(date, facility) %>% 
+  summarize(mean_copies_L = mean(avg_copy_L), 
+            mean_pcr_pos = mean(pcr_pos)) %>% 
+  ungroup(facility) %>% 
+  summarize(sum_mean_copies_L = sum(mean_copies_L),
+            mean_pcr_pos = mean_pcr_pos) %>% 
+  ggplot(aes(log10(sum_mean_copies_L), log10(mean_pcr_pos))) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq(color = "#80256D") +
+  xlab(label = "Log10 County-Level Copies Per Liter") +
+  ylab(label = "Log10 Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/copies_L_avg_vs_pcr_pos.png"))
+```
+
+### Log10 viral load vs 7DMA
 
 ```{r}
 all_data_combine %>% #filter(target == "N2") %>% 
@@ -293,16 +358,18 @@ all_data_combine %>% #filter(target == "N2") %>%
   ungroup(facility) %>% 
   summarize(sum_mean_copies = sum(mean_daily_copies),
             mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies), mean_7dma)) +
+  ggplot(aes(log10(sum_mean_copies), log10(mean_7dma))) +
   geom_point(color = "#80256D") +
   stat_poly_line(color = "#80256D") +
-  stat_poly_eq() +
-  xlab(label = "Log10 Total Daily County-Level Copies") +
-  ylab(label = "Clinical Case Seven Day Moving Average") +
+  stat_poly_eq(color = "#80256D") +
+  xlab(label = "Log10 Daily Viral Load") +
+  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
   theme_light()
 
-ggsave(here("figures/exploratory/covariate/total_copies_avg_vs_7DMA.png"))
+ggsave(here("figures/exploratory/covariate/avg_total_copies_vs_7DMA.png"))
 ```
+
+### Log10 viral load vs 7DMA (N1 & N2)
 
 ```{r}
 all_data_combine %>% 
@@ -313,13 +380,13 @@ all_data_combine %>%
   ungroup(facility) %>% 
   summarize(sum_mean_copies = sum(mean_daily_copies),
             mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies), mean_7dma, color = target)) +
+  ggplot(aes(log10(sum_mean_copies), log10(mean_7dma), color = target)) +
   geom_point() +
   stat_poly_line() +
   stat_poly_eq() +
   scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Log10 Total Daily County-Level Copies") +
-  ylab(label = "Clinical Case Seven Day Moving Average") +
+  xlab(label = "Log10 Daily Viral Load") +
+  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
   theme_light()
 
 ggsave(here("figures/exploratory/covariate/total_copies_vs_7DMA.png"))
@@ -344,7 +411,7 @@ all_data_combine %>% #filter(target == "N2") %>%
 
 ```
 
-### Log10 Daily copies N1 & N2 vs daily positive cases
+### Log10 viral load vs daily positive cases
 
 ```{r}
 all_data_combine %>% 
@@ -355,19 +422,19 @@ all_data_combine %>%
   ungroup(facility) %>% 
   summarize(sum_mean_copies = sum(mean_daily_copies),
             mean_pcr_pos = mean_pcr_pos) %>% 
-  ggplot(aes(log10(sum_mean_copies), mean_pcr_pos, color = target)) +
+  ggplot(aes(log10(sum_mean_copies), log10(mean_pcr_pos), color = target)) +
   geom_point() +
   stat_poly_line() +
   stat_poly_eq() +
   scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Log10 Total Daily County-Level Copies") +
-  ylab(label = "Daily Positive Clinical Cases") +
+  xlab(label = "Log10 Daily Viral Load") +
+  ylab(label = "Log10 Daily Positive Clinical Cases") +
   theme_light()
 
 ggsave(here("figures/exploratory/covariate/total_copies_vs_pcr_pos.png"))
 ```
 
-### Log10 Daily copies average vs daily positive cases
+### Log10 viral load vs daily positive cases
 
 ```{r}
 all_data_combine %>% 
@@ -378,12 +445,12 @@ all_data_combine %>%
   ungroup(facility) %>% 
   summarize(sum_mean_copies = sum(mean_daily_copies),
             mean_pcr_pos = mean_pcr_pos) %>% 
-  ggplot(aes(log10(sum_mean_copies), mean_pcr_pos)) +
+  ggplot(aes(log10(sum_mean_copies), log10(mean_pcr_pos))) +
   geom_point(color = "#80256D") +
   stat_poly_line(color = "#80256D") +
-  stat_poly_eq() +
-  xlab(label = "Log10 Total Daily County-Level Copies") +
-  ylab(label = "Daily Positive Clinical Cases") +
+  stat_poly_eq(color = "#80256D") +
+  xlab(label = "Log10 Daily Viral Load") +
+  ylab(label = "Log10 Daily Reported Clinical Cases") +
   theme_light()
 
 ggsave(here("figures/exploratory/covariate/total_copies_avg_vs_pcr_pos.png"))
