@@ -1,0 +1,24 @@
+project: 
+  type: website
+  output-dir: docs
+
+website:
+  title: "My Data Analysis Project"
+  navbar:
+    left:
+      - text: "Manuscript"
+        menu:
+          - text: "Exploratory Analysis"
+            href: ./code/analysis_code/exploratory_analysis_LML.qmd
+          - text: "Data processing"
+            href: ./code/processing_code/data_processing_LML.qmd
+    right:
+      - icon: github 
+        href: https://github.com/lmlariscy98/leahlariscy-MADA-project        
+
+format:
+  html:
+    theme: solar
+    highlight: zenburn
+    css: styles.css
+    toc: FALSE
