@@ -66,8 +66,8 @@ Show additional results here. Those can be some useful exploratory/descriptive f
 #| label: tbl-resulttable1
 #| tbl-cap: "Another fit table."
 #| echo: FALSE
-#resulttable1 = readRDS(here("results","resulttable1.rds"))
-#knitr::kable(resulttable1)
+resulttable1 = readRDS(here("results","resulttable1.rds"))
+knitr::kable(resulttable1)
 ```
 
 
@@ -79,7 +79,7 @@ Show additional results here. Those can be some useful exploratory/descriptive f
 #| label: fig-result2
 #| fig-cap: "Height and weight."
 #| echo: FALSE
-#knitr::include_graphics(here("results","height_weight.png"))
+knitr::include_graphics(here("results","height_weight.png"))
 ```
 
 
