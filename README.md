@@ -14,7 +14,11 @@
 
 ### Data loading and processing
 
+Go to `code` \> `processing_code` and locate the `processing.qmd` file and run the entire script. This will save all necessary output files that you will need to load for the exploratory analysis.
+
 ### Exploratory analysis
+
+Go to `code` \> `analysis_code` \> `exploratory` and locate the `exploratory_analysis.qmd` file and
 
 ### Model fitting
 
