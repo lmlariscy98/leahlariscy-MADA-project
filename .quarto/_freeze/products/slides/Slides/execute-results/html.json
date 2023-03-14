@@ -1,0 +1,18 @@
+{
+  "hash": "7e77f8f13a135562bfcf753c07cc8dba",
+  "result": {
+    "markdown": "---\ntitle: Example Quarto slides\nauthor: Andreas Handel\nformat: revealjs\nbibliography: ../dataanalysis_template_references.bib\ncsl: ../apa.csl\n---\n\n\n## Overview\n\n-   A few simple slides using the [`revealjs` (html) format](https://quarto.org/docs/presentations/revealjs/).\n-   For other formats (e.g. Powerpoint, or Beamer/pdf), see [here](https://quarto.org/docs/guide/).\n\n## Example slide\n\nThis shows the summary table. It is pulled in as R chunk.\n\n\n::: {#tbl-summarytable .cell tbl-cap='Data summary table.'}\n\n:::\n\n\n## Example slide\n\nThis shows a figure created by the analysis script. It is inserted using Markdown (not knitr code, but that would be possible too).\n\n![](images/height_weight.png){fig-align=\"center\" width=\"420\"}\n\n## Example slide\n\nThis shows the model fitting results as table.\n\n\n::: {#tbl-resulttable2 .cell tbl-cap='Linear model fit table.'}\n\n:::\n\n\n## Example slide with reference\n\nThis paper [@leek2015] discusses types of analyses.\n\n## References\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-after-body": [
+        "\n<script>\n  // htmlwidgets need to know to resize themselves when slides are shown/hidden.\n  // Fire the \"slideenter\" event (handled by htmlwidgets.js) when the current\n  // slide changes (different for each slide format).\n  (function () {\n    // dispatch for htmlwidgets\n    function fireSlideEnter() {\n      const event = window.document.createEvent(\"Event\");\n      event.initEvent(\"slideenter\", true, true);\n      window.document.dispatchEvent(event);\n    }\n\n    function fireSlideChanged(previousSlide, currentSlide) {\n      fireSlideEnter();\n\n      // dispatch for shiny\n      if (window.jQuery) {\n        if (previousSlide) {\n          window.jQuery(previousSlide).trigger(\"hidden\");\n        }\n        if (currentSlide) {\n          window.jQuery(currentSlide).trigger(\"shown\");\n        }\n      }\n    }\n\n    // hookup for slidy\n    if (window.w3c_slidy) {\n      window.w3c_slidy.add_observer(function (slide_num) {\n        // slide_num starts at position 1\n        fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);\n      });\n    }\n\n  })();\n</script>\n\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

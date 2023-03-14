@@ -1,0 +1,37 @@
+{
+  "code/analysis_code/exploratory_analysis_LML.qmd": {
+    "exploratory_analysis_LML.html": "e5afb7c7"
+  },
+  "products/manuscript/supplement/Supplementary_Material.qmd": {
+    "Supplementary_Material.html": "344409c3",
+    "Supplementary_Material.tex": "50b833c9"
+  },
+  "products/manuscript/Manuscript.qmd": {
+    "Manuscript.html": "11706b34",
+    "Manuscript.docx": "07322d73"
+  },
+  "products/slides/Slides.qmd": {
+    "Slides.html": "f88a8de6"
+  },
+  "products/readme.md": {
+    "readme.html": "034527db"
+  },
+  "code/analysis_code/readme.md": {
+    "readme.html": "65dada20"
+  },
+  "code/analysis_code/exploratory_analysis.qmd": {
+    "exploratory_analysis.html": "8ff3d60d"
+  },
+  "code/readme.md": {
+    "readme.html": "fe39a631"
+  },
+  "code/processing_code/readme.md": {
+    "readme.html": "b4452dc5"
+  },
+  "results/readme.md": {
+    "readme.html": "a2abb59d"
+  },
+  "data/readme.md": {
+    "readme.html": "0a4bb636"
+  }
+}
