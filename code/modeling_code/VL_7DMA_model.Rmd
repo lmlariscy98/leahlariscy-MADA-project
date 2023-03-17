@@ -51,6 +51,7 @@ workflow_7dma <- workflow() %>%
 ## Create model using workflow
 
 ```{r}
+set.seed(626)
 fit_7dma <- workflow_7dma %>% 
   fit(data = train_data)
 
@@ -64,15 +65,32 @@ aug_test <- augment(fit_7dma, test_data)
 aug_test %>% select(pcr_pos_7dma, .pred)
 ```
 
-## Use RMSE to evaluate model performance
+## Use RMSE and RSQ to evaluate model performance
 
 ```{r}
-aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
+rmse <- aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
+rsq <- aug_test %>% rsq(truth = pcr_pos_7dma, .pred)
+VL_7DMA_metrics <- full_join(rmse, rsq)
+
+saveRDS(VL_7DMA_metrics, here("data/modeling_data/metrics/VL_7DMA_performance.RDS"))
+
 ```
 
 ## Plot actual value vs predicted value
 
 ```{r}
 aug_test %>% ggplot(aes(pcr_pos_7dma, .pred)) +
-  geom_point()
+  geom_point() +
+  stat_smooth(method = "lm")
+ggsave(here("data/modeling_data/metrics/VL_7DMA_predict.png"))
+```
+
+## Plot residual values
+
+```{r}
+aug_residual <- aug_test %>% mutate(residual = pcr_pos_7dma - .pred)
+aug_residual %>% ggplot(aes(.pred, residual)) +
+  geom_point() 
+  
+ggsave(here("data/modeling_data/metrics/VL_7DMA_residual.png"))
 ```

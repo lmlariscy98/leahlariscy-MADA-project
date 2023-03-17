@@ -36,13 +36,31 @@ _Write a summary of your project._
 # Introduction 
 
 ## General Background Information
-_Provide enough background on your topic that others can understand the why and how of your analysis_ 
+_Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production [1,2]._
+
+_Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers [3]._
+
+_Wastewater-based detection methods have been utilized across the globe as an independent indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends [4]. WBE methods may also become a primary tool in understanding transmission dynamics as case under reporting increases._
+
 
 ## Description of data and data source
-_Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+_24-hour composite samples collected twice weekly, stored at 4C until ready for extraction. 6 extraction replicates were performed for each collection date at treatment facility._ 
+
+_2019-nCoV N1 and N2 primer-probe sets were used for universal detection of SARS-CoV-2._
+
+_The concentration per reaction of each gene target was determined by the corresponding standard curve, then sample concentration in copies per liter was determined by Equation 1. Total daily copies per day per WRF was determined by Equation 2._
+
 
 ## Questions/Hypotheses to be addressed
-_State the research questions you plan to answer with this analysis._
+_Is there a relationship between viral load and clinical case observations?_
+
+_Is there a relationship between qPCR percent positive and clinical case observations?_
+
+_What do viral load trends look like over time?_
+
+_What do clinical case trends look like over time?_
+
+_How do each of these temporal trends compare to one another over time?_
 
 To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key. Then you can include like this:
 
@@ -53,15 +71,24 @@ Examples of reproducible research projects can for instance be found in [@mckay2
 
 # Methods 
 
-_Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement._
+_data description_
 
+_cleaning process_
+
+_analysis process_
 
 ## Data aquisition
-_As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
+_Wastewater SARS-CoV-2 data was obtained through weekly surveillance efforts utilizing RT-qPCR methods._
+
+_Water Reclamation Facility data was obtained through data share directly from the WRF representatives._
+
+_COVID data downloaded from Georgia DPH website._
 
 
 ## Data import and cleaning
-_Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
+_qPCR data_
+
+_DPH COVID data_
 
 
 ## Statistical analysis
@@ -86,8 +113,8 @@ Note the loading of the data providing a **relative** path using the `../../` no
 #| label: tbl-summarytable
 #| tbl-cap: "Data summary table."
 #| echo: FALSE
-resulttable=readRDS("../../results/summarytable.rds")
-knitr::kable(resulttable)
+#resulttable=readRDS("../../results/summarytable.rds")
+#knitr::kable(resulttable)
 ```
 
 
@@ -103,7 +130,7 @@ _To get some further insight into your data, if reasonable you could compute sim
 #| label: fig-result
 #| fig-cap: "Height and weight stratified by gender."
 #| echo: FALSE
-knitr::include_graphics(here("results","height_weight_stratified.png"))
+#knitr::include_graphics(here("results","height_weight_stratified.png"))
 ```
 
 
@@ -117,8 +144,8 @@ Example @tbl-resulttable2 shows a summary of a linear model fit.
 #| label: tbl-resulttable2
 #| tbl-cap: "Linear model fit table."
 #| echo: FALSE
-resulttable2 = readRDS(here("results","resulttable2.rds"))
-knitr::kable(resulttable2)
+#resulttable2 = readRDS(here("results","resulttable2.rds"))
+#knitr::kable(resulttable2)
 ```
 
 

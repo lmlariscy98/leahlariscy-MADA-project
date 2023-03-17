@@ -29,11 +29,12 @@ First though, I want to split the data such that one set contains observations p
 ### Splitting by date
 
 ```{r}
+set.seed(420)
 train_dates <- covid_ww_data %>% filter(collection_num <= 193)
 
 test_dates <- covid_ww_data %>% filter(collection_num > 193)
 
-saveRDS(test_dates, here(data/modeling_data/test_dates.RDS))
+saveRDS(test_dates, here("data/modeling_data/test_dates.RDS"))
 ```
 
 ### Splitting by proportion for model training and testing
@@ -43,4 +44,7 @@ data_split <- initial_split(train_dates, prop = 3/4)
 
 train_data <- training(data_split)
 test_data <- testing(data_split)
+
+saveRDS(train_data, here("data/modeling_data/training_data.RDS"))
+saveRDS(test_data, here("data/modeling_data/testing_data.RDS"))
 ```
