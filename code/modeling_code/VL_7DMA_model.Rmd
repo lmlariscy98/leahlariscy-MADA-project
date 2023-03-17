@@ -1,0 +1,78 @@
+---
+title: "VL_7DMA_model"
+author: "Leah Lariscy"
+date: "2023-03-17"
+output: html_document
+---
+
+## Predictor and Outcome
+
+Predictor: Waste water viral load
+
+Outcome: Clinical case seven day moving average
+
+## Load packages and data
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(here)
+```
+
+```{r}
+train_data <- readRDS(here("data/modeling_data/training_data.RDS"))
+test_data <- readRDS(here("data/modeling_data/testing_data.RDS"))
+```
+
+## Define the model
+
+The outcome is continuous, so we will use a linear regression model
+
+```{r}
+lm_mod <- linear_reg()
+```
+
+## Create recipe using training data
+
+This is where we will set VL as predictor and 7DMA as outcome
+
+```{r}
+recipe_7dma <- recipe(pcr_pos_7dma ~ total_copies, data = train_data)
+```
+
+## Create workflow
+
+```{r}
+workflow_7dma <- workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(recipe_7dma)
+```
+
+## Create model using workflow
+
+```{r}
+fit_7dma <- workflow_7dma %>% 
+  fit(data = train_data)
+
+tidy(fit_7dma)
+```
+
+## Use model on the test data
+
+```{r}
+aug_test <- augment(fit_7dma, test_data)
+aug_test %>% select(pcr_pos_7dma, .pred)
+```
+
+## Use RMSE to evaluate model performance
+
+```{r}
+aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
+```
+
+## Plot actual value vs predicted value
+
+```{r}
+aug_test %>% ggplot(aes(pcr_pos_7dma, .pred)) +
+  geom_point()
+```

@@ -377,9 +377,17 @@ wbe_samp <- wbe_br %>%
     n.pos = sum(!is.na(bio.ct.mean)),
     n.miss = sum(is.na(bio.ct.mean)),
     pos_rate_tr = mean(pos_rate_tr)) %>%
-  mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
-  ungroup() %>% 
-  mutate(prop.pos = n.pos/(n.pos+n.miss)*100)
+   mutate(prop.pos = n.pos/(n.pos+n.miss)*100) %>% 
+  #mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup()
+ 
 wbe_samp
 saveRDS(wbe_samp, here("data/processed_data/prop_pos_sample.rds"))
+```
+
+### Combine all data: wastewater, clinical cases, percent positive
+
+```{r}
+final_data <- full_join(all_data, wbe_samp, by = c("date", "facility"))
+saveRDS(final_data, here("data/processed_data/final_combined_data.RDS"))
 ```

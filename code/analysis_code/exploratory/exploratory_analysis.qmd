@@ -62,6 +62,12 @@ Graphs to make:
 
 Graphs to make:
 
+-   wastewater viral load vs clinical case seven day moving average (linear regression)
+
+-   Wastewater viral load over time (scatter plot)
+
+-   Clinical case seven day moving average over time
+
 ## Single variate analysis
 
 ### Clinical case 7 day moving average histogram

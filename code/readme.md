@@ -1,9 +1,11 @@
-Place your various R or Rmd scripts in the appropriate folders.
+## Processing code
 
-You can either have fewer large scripts, or multiple scripts that do only specific actions. Those can be R scripts or Rmd files. In either case, document the scripts and what goes on in them so well that someone else (including future you) can easily figure out what is happening.
+Run the processing script first, this will produce data frames necessary for exploratory analysis as well as modeling code
 
-The scripts should load the appropriate data (e.g. raw or processed), perform actions, and save results (e.g. processed data, figures, computed values) in the appropriate folders. Document somewhere what inputs each script takes and where output is placed. 
+## Exploratory analysis code
 
-If scripts need to be run in a specific order, document this. Either as comments in the script, or in a separate text file such as this readme file. Ideally of course in both locations.
+Run this code if you are interested in seeing some simple single variate and multivariate illustrations that will allow you to get familiar with the data. However, it is not necessary to run any of this code for downstream analysis.
 
-Depending on your specific project, you might want to have further sub-folders.
+## Modeling code
+
+First, run `data_splitting.Rmd` to split the data into training and testing sets for the models
