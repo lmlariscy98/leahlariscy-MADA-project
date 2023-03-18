@@ -1,7 +1,7 @@
 ---
-title: "Example Manuscript Template for a Data Analysis Project"
+title: "Data Analysis Project"
 subtitle: ""
-author: Andreas Handel
+author: Leah Lariscy
 date: "`r Sys.Date()`"
 format:
   docx:
@@ -12,102 +12,83 @@ bibliography: ../dataanalysis_template_references.bib
 csl: ../apa.csl
 ---
 
-The structure below is one possible setup for a data analysis project (including the course project). For a manuscript, adjust as needed. 
-You don't need to have exactly these sections, but the content covering those sections should be addressed.
-
-This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
-
-
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages
 library(here)
 library(knitr)
 ```
 
-
-
 # Summary/Abstract
-_Write a summary of your project._
 
+*Write a summary of your project.*
 
 {{< pagebreak >}}
 
-
-# Introduction 
+# Introduction
 
 ## General Background Information
-_Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production [1,2]._
 
-_Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers [3]._
+Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production.
 
-_Wastewater-based detection methods have been utilized across the globe as an independent indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends [4]. WBE methods may also become a primary tool in understanding transmission dynamics as case under reporting increases._
+Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers.
 
+Wastewater-based detection methods have been utilized across the globe as an independent indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends \[4\]. WBE methods may also become a primary tool in understanding transmission dynamics as case under reporting increases.
 
 ## Description of data and data source
-_24-hour composite samples collected twice weekly, stored at 4C until ready for extraction. 6 extraction replicates were performed for each collection date at treatment facility._ 
 
-_2019-nCoV N1 and N2 primer-probe sets were used for universal detection of SARS-CoV-2._
+24-hour composite samples collected twice weekly, stored at 4C until ready for extraction. 6 extraction replicates were performed for each collection date at treatment facility.
 
-_The concentration per reaction of each gene target was determined by the corresponding standard curve, then sample concentration in copies per liter was determined by Equation 1. Total daily copies per day per WRF was determined by Equation 2._
+2019-nCoV N1 and N2 primer-probe sets were used for universal detection of SARS-CoV-2.
 
+The concentration per reaction of each gene target was determined by the corresponding standard curve, then sample concentration in copies per liter was determined by Equation 1. Total daily copies per day per WRF was determined by Equation 2.
 
 ## Questions/Hypotheses to be addressed
-_Is there a relationship between viral load and clinical case observations?_
 
-_Is there a relationship between qPCR percent positive and clinical case observations?_
+Is there a relationship between viral load and clinical case observations?
 
-_What do viral load trends look like over time?_
+Is there a relationship between qPCR percent positive and clinical case observations?
 
-_What do clinical case trends look like over time?_
+What do viral load trends look like over time?
 
-_How do each of these temporal trends compare to one another over time?_
+What do clinical case trends look like over time?
+
+How do each of these temporal trends compare to one another over time?
 
 To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key. Then you can include like this:
 
-Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a]
-
 {{< pagebreak >}}
 
-
-# Methods 
-
-_data description_
-
-_cleaning process_
-
-_analysis process_
+# Methods
 
 ## Data aquisition
-_Wastewater SARS-CoV-2 data was obtained through weekly surveillance efforts utilizing RT-qPCR methods._
 
-_Water Reclamation Facility data was obtained through data share directly from the WRF representatives._
+Wastewater SARS-CoV-2 data was obtained through weekly surveillance efforts utilizing RT-qPCR methods.
 
-_COVID data downloaded from Georgia DPH website._
+Water Reclamation Facility data was obtained through data share directly from the WRF representatives.
 
+COVID data downloaded from Georgia DPH website.
 
 ## Data import and cleaning
-_qPCR data_
 
-_DPH COVID data_
+*qPCR data*
 
+WWTP data
+
+*DPH COVID data*
 
 ## Statistical analysis
-_Explain anything related to your statistical analyses._
 
+Simple analyses: Wastewater and clinical data over time, linear regression model of wastewater vs clinical case data
+
+Full analyses: Wastewater data as predictor for clinical case outcomes
+
+Steps I took to build and tune model
 
 {{< pagebreak >}}
-
 
 # Results
 
 ## Exploratory/Descriptive analysis
-
-_Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
-
-
-@tbl-summarytable shows a summary of the data.
-
-Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below.
 
 ```{r}
 #| label: tbl-summarytable
@@ -117,12 +98,13 @@ Note the loading of the data providing a **relative** path using the `../../` no
 #knitr::kable(resulttable)
 ```
 
+![Distribution of recorded seven-day moving average for each day](images/7DMA_histo.png)
 
+![Distribution of viral load per sample collection per target](images/total_copies_histo.png)
 
 ## Basic statistical analysis
 
-_To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
-
+*To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p\<0.05 means statistical significance" interpretation is not valid.*
 
 @fig-result shows a scatterplot figure produced by one of the R scripts.
 
@@ -133,10 +115,15 @@ _To get some further insight into your data, if reasonable you could compute sim
 #knitr::include_graphics(here("results","height_weight_stratified.png"))
 ```
 
+![Clinical case seven-day moving average over time](images/7DMA_time_plot.png)
+
+![Wastewater viral load over time](images/avg_total_copies_time.png)
+
+![Linear regression of viral load vs case seven-day moving average](images/total_copies_avg_vs_7DMA.png)
 
 ## Full analysis
 
-_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
+*Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here.*
 
 Example @tbl-resulttable2 shows a summary of a linear model fit.
 
@@ -148,33 +135,30 @@ Example @tbl-resulttable2 shows a summary of a linear model fit.
 #knitr::kable(resulttable2)
 ```
 
-
 {{< pagebreak >}}
-
 
 # Discussion
 
 ## Summary and Interpretation
-_Summarize what you did, what you found and what it means._
+
+*Summarize what you did, what you found and what it means.*
 
 ## Strengths and Limitations
-_Discuss what you perceive as strengths and limitations of your analysis._
+
+*Discuss what you perceive as strengths and limitations of your analysis.*
 
 ## Conclusions
-_What are the main take-home messages?_
 
-_Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end_
+*What are the main take-home messages?*
 
-This paper [@leek2015] discusses types of analyses. 
+*Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end*
 
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
+This paper [@leek2015] discusses types of analyses.
+
+These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template.
 
 Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
-
 
 {{< pagebreak >}}
 
 # References
-
-
-
