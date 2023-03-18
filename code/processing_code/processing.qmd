@@ -257,8 +257,9 @@ covid <- full_join(
       rename(date=collection_date), 
     by="date"
   ) %>%
-  select(date, cases.symptom.onset, cases.reported, pcr_tests, pcr_pos, pcr_pos_7dma, pcr_pos_14dma) 
-  #full_join(cases.wrf, by = "date")
+  select(date, cases.symptom.onset, cases.reported, pcr_tests, pcr_pos, pcr_pos_7dma, pcr_pos_14dma) %>% 
+
+  mutate(prop_pos = pcr_pos/pcr_tests)
 
 saveRDS(covid, here("data/processed_data/all_covid_combined.rds"))
 covid

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Leah Lariscy">
+<meta name="dcterms.date" content="2023-03-18">
+
+<title>Data Analysis Project</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="Manuscript_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Manuscript_files/libs/quarto-html/quarto.js"></script>
+<script src="Manuscript_files/libs/quarto-html/popper.min.js"></script>
+<script src="Manuscript_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Manuscript_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Manuscript_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Manuscript_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Manuscript_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Manuscript_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Manuscript_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Analysis Project</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Leah Lariscy </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 18, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+
+</div>
+<section id="summaryabstract" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Summary/Abstract</h1>
+<p><em>Write a summary of your project.</em></p>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="introduction" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Introduction</h1>
+<section id="general-background-information" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="general-background-information"><span class="header-section-number">2.1</span> General Background Information</h2>
+<p>Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases.</p>
+</section>
+<section id="description-of-data-and-data-source" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="description-of-data-and-data-source"><span class="header-section-number">2.2</span> Description of data and data source</h2>
+<section id="wastewater-sars-cov-2-surveillance-data" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="wastewater-sars-cov-2-surveillance-data"><span class="header-section-number">2.2.1</span> Wastewater SARS-CoV-2 surveillance data</h3>
+<p>24-hour composite wastewater samples were collected twice weekly from three treatment facilities in Clarke County and refrigerated until ready for extraction. RNA extractions were performed for each sample in replicates (n=6). Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) and SARS-CoV-2 specific primer-probe pairs were used to amplify each RNA extraction replicate in technical replicates (n=3). The concentration per reaction of each gene target was determined by the amplification standard curve from positive controls corresponding to the targets.</p>
+<p>Wastewater influent flow data, including total daily flow volume and total suspended solids rate, were collected for each corresponding sample date. This was used to estimate the viral load of SARS-CoV-2, also known as total daily copies.</p>
+</section>
+<section id="covid-19-testing-data" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="covid-19-testing-data"><span class="header-section-number">2.2.2</span> COVID-19 testing data</h3>
+<p>COVID-19 data sets were downloaded from the Georgia Department of Public Health website (accessed Jan 2023), of which a subset was selected which includes symptom onset, PCR test, and PCR positive test data for each date since the first case was detected.</p>
+</section>
+</section>
+<section id="questionshypotheses-to-be-addressed" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="questionshypotheses-to-be-addressed"><span class="header-section-number">2.3</span> Questions/Hypotheses to be addressed</h2>
+<p>Is there a relationship between viral load and clinical case observations?</p>
+<p>Is there a relationship between qPCR percent positive and clinical case observations?</p>
+<p>What do viral load trends look like over time?</p>
+<p>What do clinical case trends look like over time?</p>
+<p>How do each of these temporal trends compare to one another over time?</p>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="methods" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Methods</h1>
+<section id="data-acquisition" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="data-acquisition"><span class="header-section-number">3.1</span> Data acquisition</h2>
+<p><strong>Wastewater SARS-CoV-2 viral load data</strong> was obtained through weekly surveillance efforts utilizing RT-qPCR methods (Section 2.2).</p>
+<p><strong>WWTP flow data</strong> was obtained through data share directly from plant representatives.</p>
+<p><strong>COVID-19 case data</strong> was downloaded from Georgia Department of Public Health’s COVID-19 Status Report Page in January 2023 [x].</p>
+</section>
+<section id="data-import-and-cleaning" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="data-import-and-cleaning"><span class="header-section-number">3.2</span> Data import and cleaning</h2>
+<section id="rt-qpcr-data" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="rt-qpcr-data"><span class="header-section-number">3.2.1</span> RT-qPCR data</h3>
+<p>For each target, viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the cycle threshold value (Ct) using the appropriate standard curve equation. For reactions with no Ct value (no detection), cp/uL was set to the theoretical limit of detection (LOD). From this, N1 and N2 data frames were combined and copies per liter (cp/L) of sample for both targets was estimated using Equation 1.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 14,787
+Columns: 8
+$ date                 &lt;date&gt; 2021-07-06, 2021-07-06, 2021-07-06, 2021-07-06, …
+$ facility             &lt;ord&gt; C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C…
+$ target               &lt;chr&gt; "N1", "N1", "N1", "N1", "N1", "N1", "N1", "N1", "…
+$ biological_replicate &lt;chr&gt; "A", "A", "A", "B", "B", "B", "C", "C", "C", "A",…
+$ collection_num       &lt;dbl&gt; 93, 93, 93, 93, 93, 93, 93, 93, 93, 93, 93, 93, 9…
+$ ct                   &lt;dbl&gt; 37.21, 38.48, 36.16, NA, NA, 38.49, NA, NA, NA, N…
+$ copy_num_uL_rxn      &lt;dbl&gt; 0.4679393, 0.2043360, 0.9283227, 0.0040000, 0.004…
+$ copy_num_L           &lt;dbl&gt; 401090.861, 175145.119, 795705.184, 3428.571, 342…</code></pre>
+</div>
+</div>
+</section>
+<section id="treatment-plant-flow-data" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="treatment-plant-flow-data"><span class="header-section-number">3.2.2</span> Treatment plant flow data</h3>
+<p>For each collection date, corresponding , were combined with the qPCR data. Viral load (total daily viral copies) was then estimated by multiplying concentration estimates by daily flow volume (Equation 2).</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 798
+Columns: 9
+$ date              &lt;date&gt; 2021-07-06, 2021-07-06, 2021-07-06, 2021-07-06, 202…
+$ facility          &lt;ord&gt; A, A, B, B, C, C, A, A, B, B, C, C, A, A, B, B, C, C…
+$ target            &lt;chr&gt; "N1", "N2", "N1", "N2", "N1", "N2", "N1", "N2", "N1"…
+$ collection_num    &lt;dbl&gt; 93, 93, 93, 93, 93, 93, 95, 95, 95, 95, 95, 95, 96, …
+$ avg_copy_L        &lt;dbl&gt; 24508.961, 3428.571, 44932.916, 3428.571, 173676.686…
+$ avg_copy_uL_rxn   &lt;dbl&gt; 0.02859379, 0.00400000, 0.05242174, 0.00400000, 0.20…
+$ influent_flow_L   &lt;dbl&gt; 18586372, 18586372, 10977694, 10977694, 7078720, 707…
+$ influent_tss_mg_l &lt;dbl&gt; 187, 187, 272, 272, 96, 96, 260, 260, 82, 82, 236, 2…
+$ total_copies      &lt;dbl&gt; 4.555327e+11, 6.372470e+10, 4.932598e+11, 3.763781e+…</code></pre>
+</div>
+</div>
+</section>
+<section id="covid-testing-data" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="covid-testing-data"><span class="header-section-number">3.2.3</span> COVID testing data</h3>
+<p>Data frames were combined into one and filtered to include only data pertaining to Clarke County. Proportion of positive tests per day was calculated by dividing PCR positive tests by total PCR tests.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,090
+Columns: 8
+$ date                &lt;date&gt; 2020-02-01, 2020-02-02, 2020-02-03, 2020-02-04, 2…
+$ cases.symptom.onset &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,…
+$ cases.reported      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ pcr_tests           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ pcr_pos             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ pcr_pos_7dma        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ pcr_pos_14dma       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ prop_pos            &lt;dbl&gt; NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, …</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="statistical-analysis" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="statistical-analysis"><span class="header-section-number">3.3</span> Statistical analysis</h2>
+<section id="exploratory-analysis" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="exploratory-analysis"><span class="header-section-number">3.3.1</span> Exploratory analysis</h3>
+<p>Wastewater and clinical data over time, linear regression model of wastewater vs clinical case data</p>
+</section>
+<section id="predicting-clinical-case-levels-with-wastewater-surveillance-data" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="predicting-clinical-case-levels-with-wastewater-surveillance-data"><span class="header-section-number">3.3.2</span> Predicting clinical case levels with wastewater surveillance data</h3>
+<p>Wastewater data as predictor for clinical case outcomes</p>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+</section>
+<section id="results" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Results</h1>
+<section id="descriptive-analysis" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="descriptive-analysis"><span class="header-section-number">4.1</span> Descriptive analysis</h2>
+<div id="tbl-summarytable" class="cell tbl-parent quarto-layout-panel anchored" data-tbl-cap="Data summary table.">
+
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/7DMA_histo.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Distribution of recorded seven-day moving average for each day</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/total_copies_histo.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Distribution of viral load per sample collection per target</figcaption><p></p>
+</figure>
+</div>
+<div class="cell">
+
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/7DMA_time_plot.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Clinical case seven-day moving average over time</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/avg_total_copies_time.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Wastewater viral load over time</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="basic-statistical-analysis" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="basic-statistical-analysis"><span class="header-section-number">4.2</span> Basic statistical analysis</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/total_copies_avg_vs_7DMA.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Linear regression of viral load vs case seven-day moving average</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="full-analysis" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="full-analysis"><span class="header-section-number">4.3</span> Full analysis</h2>
+<div id="tbl-resulttable2" class="cell tbl-parent quarto-layout-panel anchored" data-tbl-cap="Linear model fit table.">
+
+</div>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="discussion" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Discussion</h1>
+<section id="summary-and-interpretation" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="summary-and-interpretation"><span class="header-section-number">5.1</span> Summary and Interpretation</h2>
+<p><em>Summarize what you did, what you found and what it means.</em></p>
+</section>
+<section id="strengths-and-limitations" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="strengths-and-limitations"><span class="header-section-number">5.2</span> Strengths and Limitations</h2>
+<p><em>Discuss what you perceive as strengths and limitations of your analysis.</em></p>
+</section>
+<section id="conclusions" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="conclusions"><span class="header-section-number">5.3</span> Conclusions</h2>
+<p><em>What are the main take-home messages?</em></p>
+<p><em>Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end</em></p>
+<p>This paper <span class="citation" data-cites="leek2015">(<a href="#ref-leek2015" role="doc-biblioref">Leek &amp; Peng, 2015</a>)</span> discusses types of analyses.</p>
+<p>These papers <span class="citation" data-cites="mckay2020 mckay2020a">(<a href="#ref-mckay2020" role="doc-biblioref">McKay, Ebell, Billings, et al., 2020</a>; <a href="#ref-mckay2020a" role="doc-biblioref">McKay, Ebell, Dale, Shen, &amp; Handel, 2020</a>)</span> are good examples of papers published using a fully reproducible setup similar to the one shown in this template.</p>
+<p>Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal <a href="https://www.zotero.org/styles">are available</a>. You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word <code>references.bib</code> but giving it a more descriptive name is probably better.</p>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="references" class="level1 unnumbered" data-number="6">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">6 References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="doc-bibliography">
+<div id="ref-leek2015" class="csl-entry" role="doc-biblioentry">
+Leek, J. T., &amp; Peng, R. D. (2015). Statistics. <span>What</span> is the question? <em>Science (New York, N.Y.)</em>, <em>347</em>(6228), 1314–1315. <a href="https://doi.org/10.1126/science.aaa6146">https://doi.org/10.1126/science.aaa6146</a>
+</div>
+<div id="ref-mckay2020" class="csl-entry" role="doc-biblioentry">
+McKay, B., Ebell, M., Billings, W. Z., Dale, A. P., Shen, Y., &amp; Handel, A. (2020). Associations <span>Between Relative Viral Load</span> at <span>Diagnosis</span> and <span>Influenza A Symptoms</span> and <span>Recovery</span>. <em>Open Forum Infectious Diseases</em>, <em>7</em>(11), ofaa494. <a href="https://doi.org/10.1093/ofid/ofaa494">https://doi.org/10.1093/ofid/ofaa494</a>
+</div>
+<div id="ref-mckay2020a" class="csl-entry" role="doc-biblioentry">
+McKay, B., Ebell, M., Dale, A. P., Shen, Y., &amp; Handel, A. (2020). Virulence-mediated infectiousness and activity trade-offs and their impact on transmission potential of influenza patients. <em>Proceedings. Biological Sciences</em>, <em>287</em>(1927), 20200496. <a href="https://doi.org/10.1098/rspb.2020.0496">https://doi.org/10.1098/rspb.2020.0496</a>
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
