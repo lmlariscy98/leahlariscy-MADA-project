@@ -17,8 +17,8 @@ library(skimr)
 I am first going to read in my final data frame that I already processed in the processing script.
 
 ```{r}
-covid_ww_data <- readRDS(here("data/processed_data/final_combined_data.RDS"))
-covid_ww_data <- covid_ww_data %>% drop_na()
+covid_ww_data <- readRDS(here("data/processed_data/final_sum_combined_data.RDS"))
+#covid_ww_data <- covid_ww_data %>% drop_na()
 tibble(covid_ww_data)
 ```
 

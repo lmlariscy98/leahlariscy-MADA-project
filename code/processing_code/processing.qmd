@@ -389,6 +389,34 @@ saveRDS(wbe_samp, here("data/processed_data/prop_pos_sample.rds"))
 ### Combine all data: wastewater, clinical cases, percent positive
 
 ```{r}
-final_data <- full_join(all_data, wbe_samp, by = c("date", "facility"))
+final_data <- full_join(all_data, wbe_samp, by = c("date", "facility")) %>% 
+  mutate(log10_VL = log10(total_copies), percent_pos_test = prop_pos*100) %>% 
+  drop_na(facility)
+
 saveRDS(final_data, here("data/processed_data/final_combined_data.RDS"))
+
+final_data
+```
+
+### Summarize data across treatment facilities then average across targets
+
+Group by: Date, Collection number
+
+Keep: total copies, pos_rate_tr, log10 total copies, % positive tests
+
+```{r}
+final_data_sum <- final_data %>% group_by(date, collection_num, target) %>% 
+  summarize(sum_total_copies = sum(total_copies),
+            pos_rate_tr = mean(pos_rate_tr),
+            percent_pos_test = mean(percent_pos_test),
+            case_7dma = mean(pcr_pos_7dma)) %>% 
+  ungroup(target) %>% 
+  summarize(avg_VL = mean(sum_total_copies),
+            pos_rate_tr = mean(pos_rate_tr),
+            percent_pos_test = mean(percent_pos_test),
+            case_7dma = mean(case_7dma)) %>% 
+  ungroup() %>% 
+  mutate(log10_VL = log10(avg_VL))
+
+saveRDS(final_data_sum, here("data/processed_data/final_sum_combined_data.RDS"))
 ```

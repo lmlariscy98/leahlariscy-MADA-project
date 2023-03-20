@@ -1,5 +1,5 @@
 ---
-title: "VL_7DMA_model"
+title: "log10VL_7DMA_model"
 author: "Leah Lariscy"
 date: "2023-03-17"
 output: html_document
@@ -7,7 +7,7 @@ output: html_document
 
 ## Predictor and Outcome
 
-Predictor: Waste water viral load
+Predictor: log10 wastewater viral load
 
 Outcome: Clinical case seven day moving average
 
@@ -34,10 +34,10 @@ lm_mod <- linear_reg()
 
 ## Create recipe using training data
 
-This is where we will set VL as predictor and 7DMA as outcome
+This is where we will set log10VL as predictor and 7DMA as outcome
 
 ```{r}
-recipe_7dma <- recipe(pcr_pos_7dma ~ total_copies, data = train_data)
+recipe_7dma <- recipe(pcr_pos_7dma ~ log10_VL, data = train_data)
 ```
 
 ## Create workflow
@@ -70,11 +70,11 @@ aug_test %>% select(pcr_pos_7dma, .pred)
 ```{r}
 rmse <- aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
 rsq <- aug_test %>% rsq(truth = pcr_pos_7dma, .pred)
-VL_7DMA_metrics <- full_join(rmse, rsq)
+log10VL_7DMA_metrics <- full_join(rmse, rsq)
 
-saveRDS(VL_7DMA_metrics, here("data/modeling_data/metrics/VL_7DMA_performance.RDS"))
+saveRDS(log10VL_7DMA_metrics, here("data/modeling_data/metrics/log10VL_7DMA_performance.RDS"))
 
-VL_7DMA_metrics
+log10VL_7DMA_metrics
 
 ```
 
@@ -84,7 +84,7 @@ VL_7DMA_metrics
 aug_test %>% ggplot(aes(pcr_pos_7dma, .pred)) +
   geom_point() +
   stat_smooth(method = "lm")
-ggsave(here("data/modeling_data/metrics/VL_7DMA_predict.png"))
+ggsave(here("data/modeling_data/metrics/log10VL_7DMA_predict.png"))
 ```
 
 ## Plot residual values
@@ -94,5 +94,5 @@ aug_residual <- aug_test %>% mutate(residual = pcr_pos_7dma - .pred)
 aug_residual %>% ggplot(aes(.pred, residual)) +
   geom_point() 
   
-ggsave(here("data/modeling_data/metrics/VL_7DMA_residual.png"))
+ggsave(here("data/modeling_data/metrics/log10VL_7DMA_residual.png"))
 ```

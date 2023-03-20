@@ -1,5 +1,5 @@
 ---
-title: "VL_7DMA_model"
+title: "PP_PosTest_model"
 author: "Leah Lariscy"
 date: "2023-03-17"
 output: html_document
@@ -7,7 +7,7 @@ output: html_document
 
 ## Predictor and Outcome
 
-Predictor: Waste water viral load
+Predictor: Percent positive technical replicates per sample
 
 Outcome: Clinical case seven day moving average
 
@@ -34,65 +34,65 @@ lm_mod <- linear_reg()
 
 ## Create recipe using training data
 
-This is where we will set VL as predictor and 7DMA as outcome
+This is where we will set PP as predictor and PosTest as outcome
 
 ```{r}
-recipe_7dma <- recipe(pcr_pos_7dma ~ total_copies, data = train_data)
+recipe_PosTest <- recipe(percent_pos_test ~ pos_rate_tr, data = train_data)
 ```
 
 ## Create workflow
 
 ```{r}
-workflow_7dma <- workflow() %>% 
+workflow_PosTest <- workflow() %>% 
   add_model(lm_mod) %>% 
-  add_recipe(recipe_7dma)
+  add_recipe(recipe_PosTest)
 ```
 
 ## Create model using workflow
 
 ```{r}
 set.seed(626)
-fit_7dma <- workflow_7dma %>% 
+fit_PosTest <- workflow_PosTest %>% 
   fit(data = train_data)
 
-tidy(fit_7dma)
+tidy(fit_PosTest)
 ```
 
 ## Use model on the training data
 
 ```{r}
-aug_test <- augment(fit_7dma, train_data)
-aug_test %>% select(pcr_pos_7dma, .pred)
+aug_test <- augment(fit_PosTest, train_data)
+aug_test %>% select(percent_pos_test, .pred)
 ```
 
 ## Use RMSE and RSQ to evaluate model performance
 
 ```{r}
-rmse <- aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
-rsq <- aug_test %>% rsq(truth = pcr_pos_7dma, .pred)
-VL_7DMA_metrics <- full_join(rmse, rsq)
+rmse <- aug_test %>% rmse(truth = percent_pos_test, .pred)
+rsq <- aug_test %>% rsq(truth = percent_pos_test, .pred)
+PP_PosTest_metrics <- full_join(rmse, rsq)
 
-saveRDS(VL_7DMA_metrics, here("data/modeling_data/metrics/VL_7DMA_performance.RDS"))
+saveRDS(PP_PosTest_metrics, here("data/modeling_data/metrics/PP_PosTest_performance.RDS"))
 
-VL_7DMA_metrics
+PP_PosTest_metrics
 
 ```
 
 ## Plot actual value vs predicted value
 
 ```{r}
-aug_test %>% ggplot(aes(pcr_pos_7dma, .pred)) +
+aug_test %>% ggplot(aes(percent_pos_test, .pred)) +
   geom_point() +
   stat_smooth(method = "lm")
-ggsave(here("data/modeling_data/metrics/VL_7DMA_predict.png"))
+ggsave(here("data/modeling_data/metrics/PP_PosTest_predict.png"))
 ```
 
 ## Plot residual values
 
 ```{r}
-aug_residual <- aug_test %>% mutate(residual = pcr_pos_7dma - .pred)
+aug_residual <- aug_test %>% mutate(residual = percent_pos_test - .pred)
 aug_residual %>% ggplot(aes(.pred, residual)) +
   geom_point() 
   
-ggsave(here("data/modeling_data/metrics/VL_7DMA_residual.png"))
+ggsave(here("data/modeling_data/metrics/PP_PosTest_residual.png"))
 ```
