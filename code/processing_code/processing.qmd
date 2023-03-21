@@ -168,16 +168,26 @@ Next, I will combine all COVID-related data
 
 ### Calculate SARS-CoV-2 concentrations from CFX data for both N1 and N2
 
+n1 \<- n1 %\>% mutate(ct = as.numeric(ct),
+
+copy_num_uL_rxn = as.numeric(10\^((ct-36.046)/-3.5293)), #use standard curve slope here
+
+copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004), #replace NAs with limit of detection (0.004 copies per uL of the reaction)
+
+run_date = as.Date(run_date))
+
 ```{r}
 #N1 data here
 n1 <- n1 %>% mutate(ct = as.numeric(ct), 
               copy_num_uL_rxn = as.numeric(10^((ct-36.046)/-3.5293)), #use standard curve slope here
-              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004)) #replace NAs with limit of detection (0.004 copies per uL of the reaction)
+              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004), #replace NAs with limit of detection (0.004 copies per uL of the reaction)
+              run_date = as.Date(run_date)) 
 
 #N2 data here (because they have different standard curve equations)
 n2 <- n2 %>% mutate(ct = as.numeric(ct),
               copy_num_uL_rxn = as.numeric(10^((ct-37.731)/-3.2505)),
-              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004))
+              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004),
+              run_date = as.Date(run_date))
               
 ```
 
@@ -187,7 +197,7 @@ n2 <- n2 %>% mutate(ct = as.numeric(ct),
 
 ```{r}
 
-wbe_year2 <- bind_rows(n1, n2) %>% #combine dataframes with same number of rows
+wbe_year2 <- bind_rows(n1, n2) %>% #combine dataframes with same variables
   mutate(
     date=as.Date(sample_date, format = "%d-%b-%y"), #change to date format
     facility=substr(sample_id, 1,2), #first two letters in sample_id is facility ID
@@ -223,8 +233,8 @@ wbe_year2_avg
 
 ```{r}
 plant_clean <- plant %>% 
-  mutate(date = as.Date(date, format = "%m/%d/%Y"), #change to date format
-         influent_flow_L = influent_flow_mg*1e6*231*(0.0254^3)*1000) %>%  #convert flow 
+  mutate(date = as.Date(date), #change to date format
+         influent_flow_L = influent_flow_mg*1e6*231*(0.0254^3)*1000) %>%  #convert flow from millions of gallons to liters
   mutate(facility = as.factor(wrf), facility = recode(facility, NO = "A", MI = "B", CC = "C"), facility = ordered(facility, levels = c("A", "B", "C"))) %>% #set facility to factor and then set factor levels
    select(date, facility, influent_flow_L, influent_tss_mg_l)
 
@@ -235,7 +245,7 @@ plant_clean
 ### Combining CFX and plant data
 
 ```{r}
-n1_n2_plant <- left_join(wbe_year2_avg, plant_clean, by = c("date","facility")) %>% 
+n1_n2_plant <- left_join(wbe_year2_avg, plant_clean, by = c("date", "facility")) %>% 
   mutate(total_copies = avg_copy_L * influent_flow_L)
 
 saveRDS(n1_n2_plant, here("data/processed_data/year2_cfx_plant_combined.rds"))

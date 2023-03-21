@@ -70,7 +70,9 @@ aug_test %>% select(case_7dma, .pred)
 ```{r}
 rmse <- aug_test %>% rmse(truth = case_7dma, .pred)
 rsq <- aug_test %>% rsq(truth = case_7dma, .pred)
-PP_7DMA_metrics <- full_join(rmse, rsq)
+huber <- aug_test %>% huber_loss(truth = case_7dma, .pred)
+PP_7DMA_metrics <- bind_rows(rmse, rsq, huber)
+
 
 saveRDS(PP_7DMA_metrics, here("data/modeling_data/metrics/PP_7DMA_performance.RDS"))
 
@@ -95,4 +97,71 @@ aug_residual %>% ggplot(aes(.pred, residual)) +
   geom_point() 
   
 ggsave(here("data/modeling_data/metrics/PP_7DMA_residual.png"))
+```
+
+## Plot 7DMA and prediction temporally 
+
+```{r}
+aug_test %>% ggplot(aes(x=date)) +
+  geom_point(aes(y=case_7dma), color = "blue") +
+  geom_line(aes(y=case_7dma), color = "blue") +
+  geom_point(aes(y=.pred), color = "green") +
+  geom_line(aes(y=.pred), color = "green")
+
+```
+
+## Use model on testing data
+
+```{r}
+aug_test2 <- augment(fit_7dma, test_data)
+aug_test2 %>% select(case_7dma, .pred)
+```
+
+```{r}
+aug_test2 %>% ggplot(aes(x=date)) +
+  geom_point(aes(y=case_7dma), color = "blue") +
+  geom_line(aes(y=case_7dma), color = "blue") +
+ geom_point(aes(y=.pred), color = "green") +
+  geom_line(aes(y=.pred), color = "green")
+```
+
+## Evaluate model performance on testing set
+
+```{r}
+rmse <- aug_test2 %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test2 %>% rsq(truth = case_7dma, .pred)
+huber <- aug_test2 %>% huber_loss(truth = case_7dma, .pred)
+PP_7DMA_test_metrics <- bind_rows(rmse, rsq, huber)
+
+saveRDS(PP_7DMA_test_metrics, here("data/modeling_data/metrics/PP_7DMA_test_performance.RDS"))
+
+PP_7DMA_test_metrics
+```
+
+## Use model on testing dates
+
+```{r}
+aug_test3 <- augment(fit_7dma, test_dates)
+aug_test3 %>% select(case_7dma, .pred)
+```
+
+## Evaluate model performance on testing dates
+
+```{r}
+rmse <- aug_test3 %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test3 %>% rsq(truth = case_7dma, .pred)
+huber <- aug_test3 %>% huber_loss(truth = case_7dma, .pred)
+PP_7DMA_BA5_metrics <- bind_rows(rmse, rsq, huber)
+
+saveRDS(PP_7DMA_BA5_metrics, here("data/modeling_data/metrics/PP_7DMA_BA5_performance.RDS"))
+
+PP_7DMA_BA5_metrics
+```
+
+```{r}
+aug_test3 %>% ggplot(aes(x=date)) +
+  geom_point(aes(y=case_7dma), color = "blue") +
+  geom_line(aes(y=case_7dma), color = "blue") +
+ geom_point(aes(y=.pred), color = "green") +
+  geom_line(aes(y=.pred), color = "green")
 ```
