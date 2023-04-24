@@ -1,0 +1,187 @@
+---
+title: "VL_7DMA_model"
+author: "Leah Lariscy"
+date: "2023-03-17"
+output: html_document
+---
+
+## Predictor and Outcome
+
+Predictor: Log10 wastewater viral load
+
+Outcome: Clinical case seven day moving average
+
+## Load packages and data
+
+```{r}
+library(here)
+library(tidyverse)
+library(rsample) #Data split
+library(tidymodels)
+library(rpart) #Model fit
+library(ranger) #Model fit
+library(glmnet) #Model fit
+library(rpart.plot)  #viz of decision tree
+library(vip) #viz of variable importance plots
+library(ggpmisc) #for adding linear regression to plots
+```
+
+```{r}
+train_data <- readRDS(here("data/modeling_data/training_data.RDS")) %>% 
+  as.data.frame()
+
+test_data <- readRDS(here("data/modeling_data/testing_data.RDS")) %>% 
+  as.data.frame()
+```
+
+## Define the linear regression model
+
+The outcome is continuous, so we will use a linear regression model
+
+```{r}
+lm_mod <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression") %>% 
+  translate()
+```
+
+## Define the null model
+
+```{r}
+null_mod <- null_model() %>% 
+  set_engine("parsnip") %>% 
+  set_mode("regression") %>%
+  translate()
+```
+
+## Create recipe using training data
+
+This is where we will set VL as predictor and 7DMA as outcome
+
+```{r}
+recipe_7dma <- recipe(case_7dma ~ log10_VL, data = train_data) %>% 
+  step_nzv(all_nominal()) %>% 
+  step_dummy(all_nominal())
+```
+
+## Create null model workflow
+
+```{r}
+workflow_null <- workflow() %>% 
+  add_model(null_mod) %>% 
+  add_recipe(recipe_7dma)
+```
+
+## Create training data workflow
+
+```{r}
+workflow_7dma <- workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(recipe_7dma)
+```
+
+## Create resampling, 5x5
+
+```{r}
+folds <- vfold_cv(train_data, v = 5, repeats = 5, strata = case_7dma)
+```
+
+## Fit model to training data and null model resampling
+
+```{r}
+set.seed(626)
+fit_7dma_cv <- fit_resamples(workflow_7dma, resamples = folds)
+fit_null_cv <- fit_resamples(workflow_null, resamples = folds)
+
+collect_metrics(fit_7dma_cv)
+collect_metrics(fit_null_cv)
+```
+
+## Fit model to training data
+
+```{r}
+fit(workflow_7dma, data = train_data)
+```
+
+## Use model on the training data
+
+```{r}
+aug_train <- augment(fit_7dma_cv, train_data)
+aug_train %>% select(case_7dma, .pred)
+```
+
+## Use RMSE and RSQ to evaluate model performance
+
+```{r}
+rmse <- aug_test %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test %>% rsq(truth = case_7dma, .pred)
+VL_7DMA_metrics <- full_join(rmse, rsq)
+
+saveRDS(VL_7DMA_metrics, here("data/modeling_data/metrics/VL_7DMA_performance.RDS"))
+
+VL_7DMA_metrics
+
+```
+
+## Plot actual value vs predicted value
+
+```{r}
+aug_test %>% ggplot(aes(case_7dma, .pred)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+ggsave(here("data/modeling_data/metrics/VL_7DMA_predict.png"))
+```
+
+## Plot residual values
+
+```{r}
+aug_residual <- aug_test %>% mutate(residual = case_7dma - .pred)
+aug_residual %>% ggplot(aes(.pred, residual)) +
+  geom_point() 
+  
+ggsave(here("data/modeling_data/metrics/VL_7DMA_residual.png"))
+```
+
+```{r}
+aug_test %>% ggplot(aes(date)) +
+  geom_line(aes(y=.pred)) +
+  geom_line(aes(y=case_7dma), color = 'red')
+```
+
+## Use model on testing data
+
+```{r}
+aug_test2 <- augment(fit_7dma, test_data)
+aug_test2 %>% select(case_7dma, .pred)
+
+rmse <- aug_test2 %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test2 %>% rsq(truth = case_7dma, .pred)
+huber <- aug_test2 %>% huber_loss(truth = case_7dma, .pred)
+VL_7DMA_test_metrics <- bind_rows(rmse, rsq, huber)
+
+VL_7DMA_test_metrics
+```
+
+## Use model on testing dates
+
+```{r}
+aug_test3 <- augment(fit_7dma, test_dates)
+aug_test3 %>% select(case_7dma, .pred)
+
+rmse <- aug_test3 %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test3 %>% rsq(truth = case_7dma, .pred)
+huber <- aug_test3 %>% huber_loss(truth = case_7dma, .pred)
+VL_7DMA_test_dates_metrics <- bind_rows(rmse, rsq, huber)
+
+VL_7DMA_test_dates_metrics
+```
+
+```{r}
+aug_test3 %>% ggplot(aes(x=date)) +
+   geom_line(aes(y=case_7dma), color = "#1c246c", size = 2) +
+   geom_line(aes(y=.pred), color = "#ec4998", size = 2) +
+   theme_light() +
+     ylab(label = "Predicted 7-Day Moving Average") +
+  xlab(label = "Date") +
+  theme_light()
+```

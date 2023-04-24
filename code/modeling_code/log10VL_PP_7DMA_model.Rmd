@@ -37,7 +37,7 @@ lm_mod <- linear_reg()
 This is where we will set VL as predictor and 7DMA as outcome
 
 ```{r}
-recipe_7dma <- recipe(pcr_pos_7dma ~ log10_VL + pos_rate_tr, data = train_data)
+recipe_7dma <- recipe(case_7dma ~ log10_VL + pos_rate_tr, data = train_data)
 ```
 
 ## Create workflow
@@ -62,14 +62,14 @@ tidy(fit_7dma)
 
 ```{r}
 aug_test <- augment(fit_7dma, train_data)
-aug_test %>% select(pcr_pos_7dma, .pred)
+aug_test %>% select(case_7dma, .pred)
 ```
 
 ## Use RMSE and RSQ to evaluate model performance
 
 ```{r}
-rmse <- aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
-rsq <- aug_test %>% rsq(truth = pcr_pos_7dma, .pred)
+rmse <- aug_test %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test %>% rsq(truth = case_7dma, .pred)
 log10VL_PP_7DMA_metrics <- full_join(rmse, rsq)
 
 saveRDS(log10VL_PP_7DMA_metrics, here("data/modeling_data/metrics/log10VL_PP_7DMA_performance.RDS"))
@@ -81,7 +81,7 @@ log10VL_PP_7DMA_metrics
 ## Plot actual value vs predicted value
 
 ```{r}
-aug_test %>% ggplot(aes(pcr_pos_7dma, .pred)) +
+aug_test %>% ggplot(aes(case_7dma, .pred)) +
   geom_point() +
   stat_smooth(method = "lm")
 ggsave(here("data/modeling_data/metrics/log10VL_PP_7DMA_predict.png"))
@@ -90,7 +90,7 @@ ggsave(here("data/modeling_data/metrics/log10VL_PP_7DMA_predict.png"))
 ## Plot residual values
 
 ```{r}
-aug_residual <- aug_test %>% mutate(residual = pcr_pos_7dma - .pred)
+aug_residual <- aug_test %>% mutate(residual = case_7dma - .pred)
 aug_residual %>% ggplot(aes(.pred, residual)) +
   geom_point() 
   

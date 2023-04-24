@@ -43,17 +43,15 @@ library(here)
 
 ## Load the data here
 
-recovery_output \<- read_csv(here("data/raw_data/recovery_data.csv"))
-
-recovery_input \<- read_csv(here("data/raw_data/calfguard.csv"))
-
-```{r}
+```{r, message=FALSE}
 here()
 # Load CFX N1 data
-n1 <- read_csv(here("data/raw_data/cfx_n1.csv"))
+n1_1 <- read_csv(here("data/raw_data/n1_data_year1.csv")) #year 1 data
+n1 <- read_csv(here("data/raw_data/cfx_n1.csv")) #year 2 data
 
 # Load CFX N2 data
-n2 <- read_csv(here("data/raw_data/cfx_n2.csv"))
+n2_1 <- read_csv(here("data/raw_data/n2_data_year1.csv")) #year 1 data
+n2 <- read_csv(here("data/raw_data/cfx_n2.csv")) #year 2 data
 
 # Load Plant data
 plant <- read_csv(here("data/raw_data/plant_data.csv"))
@@ -138,57 +136,82 @@ skim(covid_case)
 skim(covid_testing)
 ```
 
-### Catchment-level COVID-19 Case Data
-
-`covid_case_wrf` \<- Count of confirmed cases of COVID-19 on a given day from each WRF catchment zone in ACC.
-
-```{r}
-#I don't have access to this data yet, waiting on DPH partner to send.
-```
-
 ## Data cleaning and wrangling
 
-Currently, I have 7 unique sets of data. In order to do analysis on the data down the road, I want to figure out how to best combine these data sets.
+Currently, I have 6 datasets. In order to do analysis on these data down the road, I want to figure out how to best combine them.
 
 Here is a list of the data sets I have:
 
 1.  CFX N1 results
 2.  CFX N2 results
-3.  Plant flow and total suspended solids
+3.  WWTP flow rate and total solids
 4.  County-level COVID symptoms
 5.  County-level COVID confirmed cases
 6.  County-level COVID tests administered
-7.  Catchment-level COVID confirmed cases
-8.  CFX recovery input
-9.  CFX recovery output
 
 I will start by combining the CFX output data with the plant flow data and calling the data frame `wbe`
 
 Next, I will combine all COVID-related data
 
+### Remove unnecessary variables
+
+```{r}
+#N1
+n1_1 <- n1_1 %>% select(c(sample_date, collection_num, sample_id, target, ct))
+n1 <- n1 %>% select(c(sample_date, collection_num, sample_id, target, ct)) %>% 
+  filter(between(sample_date, as.Date("2021-07-06") , as.Date("2022-12-21")))
+
+#N2
+n2_1 <- n2_1 %>% select(c(sample_date, collection_num, sample_id, target, ct))
+n2 <- n2 %>% select(c(sample_date, collection_num, sample_id, target, ct)) %>% 
+  filter(between(sample_date, as.Date("2021-07-06") , as.Date("2022-12-21")))
+```
+
 ### Calculate SARS-CoV-2 concentrations from CFX data for both N1 and N2
 
 n1 \<- n1 %\>% mutate(ct = as.numeric(ct),
 
-copy_num_uL_rxn = as.numeric(10\^((ct-36.046)/-3.5293)), #use standard curve slope here
+Year1:
+
+Year 2: copy_num_uL_rxn = as.numeric(10\^((ct-36.046)/-3.5293)), #use standard curve slope here
 
 copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004), #replace NAs with limit of detection (0.004 copies per uL of the reaction)
 
 run_date = as.Date(run_date))
 
 ```{r}
-#N1 data here
+#year 1 N1 data here
+n1_1 <- n1_1 %>% mutate(ct = as.numeric(ct), 
+                copy_num_uL_rxn = as.numeric(10^((ct-34.008)/-3.389)),
+                copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004))
+
+#year 2 N1 data here
 n1 <- n1 %>% mutate(ct = as.numeric(ct), 
               copy_num_uL_rxn = as.numeric(10^((ct-36.046)/-3.5293)), #use standard curve slope here
-              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004), #replace NAs with limit of detection (0.004 copies per uL of the reaction)
-              run_date = as.Date(run_date)) 
+              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004)) #replace NAs with limit of detection (0.004 copies per uL of the reaction)
 
-#N2 data here (because they have different standard curve equations)
+#N2 year 1 data here
+n2_1 <-n2_1 %>% mutate(ct = as.numeric(ct),
+                copy_num_uL_rxn = as.numeric(10^((ct-32.416)/-3.3084)),
+                copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004))
+
+#N2 year 2 data here
 n2 <- n2 %>% mutate(ct = as.numeric(ct),
               copy_num_uL_rxn = as.numeric(10^((ct-37.731)/-3.2505)),
-              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004),
-              run_date = as.Date(run_date))
-              
+              copy_num_uL_rxn = replace_na(copy_num_uL_rxn, 0.004))
+
+```
+
+### Combining year 1 and 2 data
+
+```{r}
+#N1
+n1 <- bind_rows(n1_1, n1)
+tibble(n1)
+
+#N2
+n2 <- bind_rows(n2_1, n2)
+tibble(n2)
 ```
 
 ### Combining and cleaning CFX data
@@ -209,8 +232,8 @@ wbe_year2 <- bind_rows(n1, n2) %>% #combine dataframes with same variables
   mutate(facility = as.factor(facility), 
          facility = recode(facility, NO = "A", MI = "B", CC = "C"), 
          facility = ordered(facility, levels = c("A", "B", "C")), #set facility to factor and then set factor levels
-         copy_num_L = copy_num_uL_rxn*20/5*60/280*1000*1000) %>% 
-  filter(between(date, as.Date("2021-07-06") , as.Date("2022-12-21"))) 
+         copy_num_L = copy_num_uL_rxn*20/5*60/280*1000*1000)
+   
 
 saveRDS(wbe_year2, here("data/processed_data/year2_cfx_clean.rds"))
 wbe_year2
@@ -245,8 +268,8 @@ plant_clean
 ### Combining CFX and plant data
 
 ```{r}
-n1_n2_plant <- left_join(wbe_year2_avg, plant_clean, by = c("date", "facility")) %>% 
-  mutate(total_copies = avg_copy_L * influent_flow_L)
+n1_n2_plant <- left_join(wbe_year2, plant_clean, by = c("date", "facility")) %>% 
+  mutate(total_copies = copy_num_L * influent_flow_L)
 
 saveRDS(n1_n2_plant, here("data/processed_data/year2_cfx_plant_combined.rds"))
 n1_n2_plant
@@ -279,7 +302,7 @@ covid
 
 ```{r}
 all_data <- full_join(n1_n2_plant, covid, by = "date") %>% 
-   filter(between(date, as.Date("2021-07-06") , as.Date("2022-12-21"))) 
+   filter(between(date, as.Date("2020-06-30") , as.Date("2022-12-21"))) 
 
 saveRDS(all_data, here("data/processed_data/year2_all_data_combined.rds"))
 all_data
@@ -316,16 +339,6 @@ saveRDS(recovery_input_clean, here("data/processed_data/recovery_input_clean.rds
   
 ```
 
-### Combining recovery data sets
-
-```{r}
-recovery_calc <- left_join(recovery_output_clean, recovery_input_clean, by = "cg_num") %>% 
-  mutate(percent_recovery = (copies_ul_sample/copies_ul_input)*100) %>% 
-  select(facility, collection_num, percent_recovery)
-
-saveRDS(recovery_calc, here("data/processed_data/recovery_percentages.rds"))
-```
-
 ### Calculate percent positive of technical reps
 
 This isn't super important, but I'm including anyways.
@@ -348,9 +361,47 @@ wbe_tr <- wbe_year2 %>% group_by(date, facility, target, biological_replicate) %
 wbe_tr
 ```
 
+#### Percent positive technical reps for N1 only
+
+```{r}
+wbe_tr_n1 <- wbe_year2 %>% group_by(date, facility, target, biological_replicate) %>% 
+  filter(target == "N1") %>% 
+  dplyr::summarise(
+    n=n(), 
+    n.miss=sum(is.na(ct)), 
+    ct.mean=mean(ct,na.rm=T), 
+    ct.sd=sd(ct,na.rm=T)
+  ) %>% 
+  mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup() %>% 
+  mutate(n.pos = n - n.miss) %>% 
+  mutate(pos = ifelse(n.pos > 0, "pos", "neg")) %>% 
+  mutate(percent_pos = (n.pos/n)*100)
+wbe_tr_n1
+```
+
+#### Percent positive N2 only
+
+```{r}
+wbe_tr_n2 <- wbe_year2 %>% group_by(date, facility, target, biological_replicate) %>% 
+  filter(target == "N2") %>% 
+  dplyr::summarise(
+    n=n(), 
+    n.miss=sum(is.na(ct)), 
+    ct.mean=mean(ct,na.rm=T), 
+    ct.sd=sd(ct,na.rm=T)
+  ) %>% 
+  mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup() %>% 
+  mutate(n.pos = n - n.miss) %>% 
+  mutate(pos = ifelse(n.pos > 0, "pos", "neg")) %>% 
+  mutate(percent_pos = (n.pos/n)*100)
+wbe_tr_n2
+```
+
 ### Calculate percent positive per biological replicate
 
-`pos_rate_tr` will calculate the percento of positive technical replicates, averaged across biological replicates, within each sample's targets (N1 and N2)
+`pos_rate_tr` will calculate the percent of positive technical replicates, averaged across biological replicates, within each sample's targets (N1 and N2)
 
 `percent_pos_bio` will calculate percent of positive biological replicates for each target
 
@@ -365,9 +416,7 @@ wbe_br <- wbe_tr %>%
     n.total.miss = sum(n.miss), 
     bio.ct.mean = mean(ct.mean, na.rm = T), 
     bio.ct.sd = sd(ct.mean, na.rm=T), 
-    pos_rate_tr = mean(percent_pos),
-    tech.ct.dists = paste(paste0(biological_replicate, " = ", round(ct.mean,2), " (sd=", round(ct.sd,2), ", n=", n-n.miss, ")"), collapse = "; ")
-  ) %>%
+    pos_rate_tr = mean(percent_pos)) %>%
   mutate(percent_pos_bio = (n.bio.non.miss/n.bio)*100) %>% 
   mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
   ungroup()
@@ -396,6 +445,20 @@ wbe_samp
 saveRDS(wbe_samp, here("data/processed_data/prop_pos_sample.rds"))
 ```
 
+### Calculate percent positive per collection date
+
+```{r}
+wbe_coll <- wbe_samp %>%
+  group_by(date) %>% 
+  dplyr::summarise(
+    n.pos = sum(!is.na(n.pos)),
+    n.miss = sum(is.na(n.miss)),
+    pos_rate_tr = mean(pos_rate_tr)) %>%
+   mutate(prop.pos = n.pos/(n.pos+n.miss)*100) %>% 
+  #mutate_all(function(x){ifelse(is.nan(x), NA, x)}) %>% 
+  ungroup()
+```
+
 ### Combine all data: wastewater, clinical cases, percent positive
 
 ```{r}
@@ -403,9 +466,9 @@ final_data <- full_join(all_data, wbe_samp, by = c("date", "facility")) %>%
   mutate(log10_VL = log10(total_copies), percent_pos_test = prop_pos*100) %>% 
   drop_na(facility)
 
+
 saveRDS(final_data, here("data/processed_data/final_combined_data.RDS"))
 
-final_data
 ```
 
 ### Summarize data across treatment facilities then average across targets
@@ -419,14 +482,34 @@ final_data_sum <- final_data %>% group_by(date, collection_num, target) %>%
   summarize(sum_total_copies = sum(total_copies),
             pos_rate_tr = mean(pos_rate_tr),
             percent_pos_test = mean(percent_pos_test),
-            case_7dma = mean(pcr_pos_7dma)) %>% 
+            case_7dma = mean(pcr_pos_7dma),
+            pcr_pos = mean(pcr_pos),
+            test_admin = mean(pcr_tests)) %>% 
   ungroup(target) %>% 
   summarize(avg_VL = mean(sum_total_copies),
             pos_rate_tr = mean(pos_rate_tr),
             percent_pos_test = mean(percent_pos_test),
-            case_7dma = mean(case_7dma)) %>% 
+            case_7dma = mean(case_7dma),
+            pcr_pos = mean(pcr_pos),
+            test_admin = mean(test_admin)) %>% 
   ungroup() %>% 
-  mutate(log10_VL = log10(avg_VL))
+  mutate(log10_VL = log10(avg_VL)) %>% 
+  drop_na()
+
+table1::label(final_data_sum$log10_VL) <- "Log10 Viral Load"
+table1::label(final_data_sum$pos_rate_tr) <- "Assay Positivity"
+table1::label(final_data_sum$case_7dma) <- "Clinical Case Seven-Day Moving Average"
+table1::label(final_data_sum$pcr_pos) <- "Daily Reported Clinical Cases"
+table1::label(final_data_sum$percent_pos_test) <- "PCR Test Positivity"
 
 saveRDS(final_data_sum, here("data/processed_data/final_sum_combined_data.RDS"))
+
+final_data_sum
+
+```
+
+```{r}
+
+table1 <- (table1(~ log10_VL + pos_rate_tr + case_7dma + pcr_pos + percent_pos_test, data=final_data_sum)) 
+saveRDS(table1, here("results/manuscript_table1.rds"))
 ```

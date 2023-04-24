@@ -1,5 +1,5 @@
 ---
-title: "Data Analysis Project"
+title: "Wastewater Surveillance for SARS-CoV-2 Data Analysis Project"
 subtitle: ""
 author: Leah Lariscy
 date: "`r Sys.Date()`"
@@ -7,22 +7,23 @@ format:
   html:
     toc: false
     number-sections: true
+    number-depth: 2
     highlight-style: github
-bibliography: ../dataanalysis_template_references.bib
+bibliography: ../citation.bib
 csl: ../apa.csl
 ---
 
 ```{r, echo=FALSE, message=FALSE}
-# load a few R packages
+# load packages
 library(here)
 library(knitr)
 library(tidyverse)
 library(skimr)
 ```
 
-# Summary/Abstract
+# Abstract
 
-*Write a summary of your project.*
+Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases.
 
 {{< pagebreak >}}
 
@@ -30,31 +31,29 @@ library(skimr)
 
 ## General Background Information
 
-Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases.
+Paragraph 1: Impact of COVID-19 on public health, clinical case under-reporting
+
+Paragraph 2: Wastewater surveillance is possible because of excretory functions and stability of viral particles in wastewater, surveillance prevalence and correlations with clinical case data
+
+Paragraph 3: Surveillance program background. Aims, County-level parallel analysis of wastewater surveillance data and reported clinical cases
 
 ## Description of data and data source
 
-### Wastewater SARS-CoV-2 surveillance data
+### SARS-CoV-2 wastewater surveillance data
 
-24-hour composite wastewater samples were collected twice weekly from three treatment facilities in Clarke County and refrigerated until ready for extraction. RNA extractions were performed for each sample in replicates (n=6). Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) and SARS-CoV-2 specific primer-probe pairs were used to amplify each RNA extraction replicate in technical replicates (n=3). The concentration per reaction of each gene target was determined by the amplification standard curve from positive controls corresponding to the targets.
+Sample collection for wastewater surveillance began June 30, 2020 and occurred twice weekly (excluding major holidays) through December 21, 2022. Raw wastewater influent was collected from three Wastewater Treatment Plants in Athens-Clarke County and viral RNA was extracted. RT-qPCR was used to calculate the cycle threshold (Ct) value of each reaction, which is used to estimate SARS-CoV-2 copies per liter of wastewater in the data cleaning process (Section 3.2).
 
-Wastewater influent flow data, including total daily flow volume and total suspended solids rate, were collected for each corresponding sample date. This was used to estimate the viral load of SARS-CoV-2, also known as total daily copies.
+### Wastewater treatment plant data
 
-### COVID-19 testing data
+Wastewater influent flow data, including millions of gallons per day (MGD) and total suspended solids (TSS), were collected for each corresponding sampling date.
 
-COVID-19 data sets were downloaded from the Georgia Department of Public Health website (accessed Jan 2023), of which a subset was selected which includes symptom onset, PCR test, and PCR positive test data for each date since the first case was detected.
+### COVID-19 clinical data
 
-## Questions/Hypotheses to be addressed
+COVID-19 clinical data were obtained from the Georgia Department of Public Health website [@COVID19StatusReport] which includes COVID-19 reported clinical case data for the state of Georgia. These data include reported cases, demographics, comorbidities, deaths, and more. However, not all data is necessary for analysis and will be subset to include only symptom onset, positive case, and administered test data for Clarke County. (Section 3.2).
 
-Is there a relationship between viral load and clinical case observations?
+## Hypotheses to be addressed
 
-Is there a relationship between qPCR percent positive and clinical case observations?
-
-What do viral load trends look like over time?
-
-What do clinical case trends look like over time?
-
-How do each of these temporal trends compare to one another over time?
+This study aims to conduct a parallel analysis between SARS-CoV-2 wastewater surveillance data and reported COVID-19 clinical case data in Athens-Clarke County, Georgia. It is expected that wastewater quantifications and reported case data will have a positive linear relationship. It is also hypothesized that certain wastewater-clinical relationships will be stronger than others, see Table 1 for variables of interest.
 
 {{< pagebreak >}}
 
@@ -62,55 +61,64 @@ How do each of these temporal trends compare to one another over time?
 
 ## Data acquisition
 
-**Wastewater SARS-CoV-2 viral load data** was obtained through weekly surveillance efforts utilizing RT-qPCR methods (Section 2.2).
+### Wastewater surveillance data
 
-**WWTP flow data** was obtained through data share directly from plant representatives.
+24-hour composite raw wastewater influent samples were collected twice-weekly from three treatment facilities in Clarke County and stored at 4°C until ready for extraction. 280 𝜇L of wastewater in replicates (n=6) was aliquoted and direct RNA extraction (Zymo Research, R2042) was performed on the same day as sample collection.Each extraction replicate was reverse transcribed and amplified using RT-qPCR and a SARS-CoV-2 specific primer-probe panel (IDT, 10006713), done in technical replicates (n=3). As part of the qPCR panel, two gene targets on the N-gene of the SARS-CoV-2 genome were used for amplification. The N1 and N2 gene targets were chosen due to their conservation across variants and act as universal detectors of the virus \[\@\]. Cycle threshold (Ct) values were then calculated for each PCR reaction, which were then used to estimate SARS-CoV-2 viral load (See Section 3.2 for more detail).
 
-**COVID-19 case data** was downloaded from Georgia Department of Public Health's COVID-19 Status Report Page in January 2023 \[x\].
+### Wastewater treatment plant data
+
+For each treatment plant and collection date, MGD and TSS was shared by plant operators directly with our team and compiled throughout the study period.
+
+### COVID-19 clinical data
+
+Reported case and testing data were downloaded from Georgia Department of Public Health's COVID-19 Status Report Page in January 2023.
 
 ## Data import and cleaning
 
-### RT-qPCR data
+### Calculating wastewater viral load
 
-For each target, viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the cycle threshold value (Ct) using the appropriate standard curve equation. For reactions with no Ct value (no detection), cp/uL was set to the theoretical limit of detection (LOD). From this, N1 and N2 data frames were combined and copies per liter (cp/L) of sample for both targets was estimated using Equation 1.
+Amplification standard curve equations where generated from serially diluted synthetic controls (Supplementary Table). This was done for N1 and N2 gene targets for both surveillance years because RT-qPCR methods were altered after the first year. Viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the Ct value using the appropriate standard curve equation. For reactions with no detection, concentration was set to the theoretical limit of detection (0.004 cp/uL). Data sets for each standard curve was transformed separately before being combined. After combining all qPCR data, copies per liter (cp/L) of wastewater was calculated for each technical replicate using Equation 1. Average cp/L of wastewater was determined by taking the mean of all technical replicates per sample per gene target.
 
-```{r, echo=FALSE, message=FALSE}
+INSERT EQUATION 1
 
-readRDS(here("data/processed_data/year2_cfx_clean.rds")) %>% glimpse()
+WWTP data was then transformed by converting the flow rate from millions of gallons per day to liters per day. qPCR data was then combined with WWTP data and total viral load per sample was calculated by multiplying average copies per liter by the flow rate. Average viral load for each sample was then determined by taking the mean of the viral load for both N1 and N2 gene targets. County-level daily viral load was calculated by taking the sum of the average viral load from each of the three WWTP samples.
 
-```
+### Calculating wastewater qPCR assay positivity
 
-### Treatment plant flow data
+qPCR assay positivity was determined for each collection date by finding the proportion of assays that detected SARS-CoV-2 out of the total number of assays performed. This includes all biological and technical replicate assays that were performed for a given sampling date. County-level assay positivity data was then combined with county-level viral load data.
 
-For each collection date, corresponding , were combined with the qPCR data. Viral load (total daily viral copies) was then estimated by multiplying concentration estimates by daily flow volume (Equation 2).
+### Adding COVID-19 clinical data
 
-```{r, echo=FALSE, message=FALSE}
-readRDS(here("data/processed_data/year2_cfx_plant_combined.rds")) %>% glimpse()
-```
-
-### COVID testing data
-
-Data frames were combined into one and filtered to include only data pertaining to Clarke County. Proportion of positive tests per day was calculated by dividing PCR positive tests by total PCR tests.
-
-```{r, echo=FALSE, message=FALSE}
-readRDS(here("data/processed_data/all_covid_combined.rds")) %>% glimpse()
-```
+Of the downloaded Georgia DPH data, the data set containing positive case counts was retained. Of these data, daily reported case counts and case seven-day moving average were kept for analysis. These data were then subset to include only data from Clarke County collected during the surveillance period and combined with wastewater data.
 
 ## Statistical analysis
 
-### Exploratory analysis
+### Feature selection
 
-Wastewater and clinical data over time, linear regression model of wastewater vs clinical case data
+Two wastewater and two clinical case metrics were identified as features of interest during exploratory analysis steps where
 
-### Predicting clinical case levels with wastewater surveillance data
+### Data splitting
 
-Wastewater data as predictor for clinical case outcomes
+Compare relationship differences between year 1 and year 2
+
+### Model training and fitting
+
+Trained linear regression models on year 1 data using cross validation
+
+Performance validation, metrics?
+
+### Model testing
+
+The trained model was then tested on the year 2 data
 
 {{< pagebreak >}}
 
 # Results
 
-## Descriptive analysis
+```{r, echo=FALSE, message=FALSE}
+
+readRDS(here("results/manuscript_table1.rds"))
+```
 
 ```{r}
 #| label: tbl-summarytable
@@ -164,14 +172,6 @@ Wastewater data as predictor for clinical case outcomes
 ## Conclusions
 
 *What are the main take-home messages?*
-
-*Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end*
-
-This paper [@leek2015] discusses types of analyses.
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template.
-
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
 
 {{< pagebreak >}}
 

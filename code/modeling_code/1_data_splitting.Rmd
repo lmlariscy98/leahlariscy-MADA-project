@@ -1,0 +1,49 @@
+---
+title: "Data splitting"
+author: "Leah Lariscy"
+date: "2023-03-17"
+output: html_document
+---
+
+```{r, message=FALSE}
+library(tidyverse) 
+library(tidymodels)
+library(here)
+library(skimr)
+```
+
+## Data splitting for model building
+
+I am first going to read in my final data frame that I already processed in the processing script.
+
+```{r}
+covid_ww_data <- readRDS(here("data/processed_data/final_sum_combined_data.RDS"))
+covid_ww_data <- covid_ww_data %>% drop_na()
+tibble(covid_ww_data)
+```
+
+I want to split the data such that one set contains observations prior to February 28, 2022 and the latter contains observations after February 28, 2022. From my exploratory analysis, namely, comparing temporal trends of wastewater viral load with clinical case moving averages, I noted that there appears to be a disconnect in trends after the Omicron BA.5 wave (Late summer/fall 2022). As such, I would like to build models using data prior to this time and then test the model on the latter portion of the data.
+
+### Splitting by date
+
+```{r}
+train_dates <- covid_ww_data %>% filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) # n=151
+
+test_dates <- covid_ww_data %>% filter(between(date, as.Date("2022-03-02"), as.Date("2022-12-21"))) # n=73
+
+saveRDS(test_dates, here("data/modeling_data/test_dates.RDS"))
+
+```
+
+### Splitting by proportion for model training and testing
+
+```{r}
+set.seed(420)
+data_split <- initial_split(train_dates, prop = 3/4)
+
+train_data <- training(data_split) # n=113
+test_data <- testing(data_split) # n=38
+
+saveRDS(train_data, here("data/modeling_data/training_data.RDS"))
+saveRDS(test_data, here("data/modeling_data/testing_data.RDS"))
+```

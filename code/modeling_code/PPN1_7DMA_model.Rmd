@@ -1,0 +1,167 @@
+---
+title: "PP_7DMA_model"
+author: "Leah Lariscy"
+date: "2023-03-17"
+output: html_document
+---
+
+## Predictor and Outcome
+
+Predictor: Percent positive technical replicates per sample
+
+Outcome: Clinical case seven day moving average
+
+## Load packages and data
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(here)
+```
+
+```{r}
+train_data <- readRDS(here("data/modeling_data/training_data_n1.RDS"))
+test_data <- readRDS(here("data/modeling_data/testing_data_n1.RDS"))
+```
+
+## Define the model
+
+The outcome is continuous, so we will use a linear regression model
+
+```{r}
+lm_mod <- linear_reg()
+```
+
+## Create recipe using training data
+
+This is where we will set PP as predictor and 7DMA as outcome
+
+```{r}
+recipe_7dma <- recipe(pcr_pos_7dma ~ percent_pos, data = train_data)
+```
+
+## Create workflow
+
+```{r}
+workflow_7dma <- workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(recipe_7dma)
+```
+
+## Create model using workflow
+
+```{r}
+set.seed(626)
+fit_7dma <- workflow_7dma %>% 
+  fit(data = train_data)
+
+tidy(fit_7dma)
+```
+
+## Use model on the training data
+
+```{r}
+aug_test <- augment(fit_7dma, train_data)
+aug_test %>% select(pcr_pos_7dma, .pred)
+```
+
+## Use RMSE and RSQ to evaluate model performance
+
+```{r}
+rmse <- aug_test %>% rmse(truth = pcr_pos_7dma, .pred)
+rsq <- aug_test %>% rsq(truth = pcr_pos_7dma, .pred)
+huber <- aug_test %>% huber_loss(truth = pcr_pos_7dma, .pred)
+PP_7DMA_metrics <- bind_rows(rmse, rsq, huber)
+
+
+saveRDS(PP_7DMA_metrics, here("data/modeling_data/metrics/PP_7DMA_performance.RDS"))
+
+PP_7DMA_metrics
+
+```
+
+## Plot actual value vs predicted value
+
+```{r}
+aug_test %>% ggplot(aes(pcr_pos_7dma, .pred)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+ggsave(here("data/modeling_data/metrics/PP_7DMA_predict.png"))
+```
+
+## Plot residual values
+
+```{r}
+aug_residual <- aug_test %>% mutate(residual = pcr_pos_7dma - .pred)
+aug_residual %>% ggplot(aes(.pred, residual)) +
+  geom_point() 
+  
+ggsave(here("data/modeling_data/metrics/PP_7DMA_residual.png"))
+```
+
+## Plot 7DMA and prediction temporally
+
+```{r}
+aug_test %>% ggplot(aes(x=date)) +
+  geom_point(aes(y=pcr_pos_7dma), color = "blue") +
+  geom_line(aes(y=pcr_pos_7dma), color = "blue") +
+  geom_point(aes(y=.pred), color = "green") +
+  geom_line(aes(y=.pred), color = "green")
+
+```
+
+## Use model on testing data
+
+```{r}
+aug_test2 <- augment(fit_7dma, test_data)
+aug_test2 %>% select(pcr_pos_7dma, .pred)
+```
+
+```{r}
+aug_test2 %>% ggplot(aes(x=date)) +
+  geom_point(aes(y=pcr_pos_7dma), color = "blue") +
+  geom_line(aes(y=pcr_pos_7dma), color = "blue") +
+ geom_point(aes(y=.pred), color = "green") +
+  geom_line(aes(y=.pred), color = "green")
+```
+
+## Evaluate model performance on testing set
+
+```{r}
+rmse <- aug_test2 %>% rmse(truth = pcr_pos_7dma, .pred)
+rsq <- aug_test2 %>% rsq(truth = pcr_pos_7dma, .pred)
+huber <- aug_test2 %>% huber_loss(truth = pcr_pos_7dma, .pred)
+PP_7DMA_test_metrics <- bind_rows(rmse, rsq, huber)
+
+saveRDS(PP_7DMA_test_metrics, here("data/modeling_data/metrics/PP_7DMA_test_performance.RDS"))
+
+PP_7DMA_test_metrics
+```
+
+## Use model on testing dates
+
+```{r}
+aug_test3 <- augment(fit_7dma, test_dates_n1)
+aug_test3 %>% select(pcr_pos_7dma, .pred)
+```
+
+## Evaluate model performance on testing dates
+
+```{r}
+rmse <- aug_test3 %>% rmse(truth = pcr_pos_7dma, .pred)
+rsq <- aug_test3 %>% rsq(truth = pcr_pos_7dma, .pred)
+huber <- aug_test3 %>% huber_loss(truth = pcr_pos_7dma, .pred)
+PP_7DMA_BA5_metrics <- bind_rows(rmse, rsq, huber)
+
+saveRDS(PP_7DMA_BA5_metrics, here("data/modeling_data/metrics/PP_7DMA_BA5_performance.RDS"))
+
+PP_7DMA_BA5_metrics
+```
+
+```{r}
+aug_test3 %>% ggplot(aes(x=date)) +
+  geom_point(aes(y=pcr_pos_7dma), color = "blue") +
+  geom_line(aes(y=pcr_pos_7dma), color = "blue") +
+ geom_point(aes(y=.pred), color = "green") +
+  geom_line(aes(y=.pred), color = "green")
+```

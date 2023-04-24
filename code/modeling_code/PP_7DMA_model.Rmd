@@ -99,7 +99,7 @@ aug_residual %>% ggplot(aes(.pred, residual)) +
 ggsave(here("data/modeling_data/metrics/PP_7DMA_residual.png"))
 ```
 
-## Plot 7DMA and prediction temporally 
+## Plot 7DMA and prediction temporally
 
 ```{r}
 aug_test %>% ggplot(aes(x=date)) +

@@ -20,7 +20,8 @@ library(here)
 ```
 
 ```{r}
-train_data <- readRDS(here("data/modeling_data/training_data.RDS"))
+train_data <- readRDS(here("data/modeling_data/training_data.RDS")) %>% 
+  as.data.frame()
 test_data <- readRDS(here("data/modeling_data/testing_data.RDS"))
 ```
 

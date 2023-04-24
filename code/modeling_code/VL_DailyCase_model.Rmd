@@ -53,7 +53,7 @@ workflow_DailyCase <- workflow() %>%
 ```{r}
 set.seed(626)
 fit_DailyCase <- workflow_DailyCase %>% 
-  fit(data = train_data)
+  fit(data = as.data.frame(train_data))
 
 tidy(fit_DailyCase)
 ```

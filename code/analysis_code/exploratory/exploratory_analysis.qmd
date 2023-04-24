@@ -11,7 +11,7 @@ theme: solar
 
 ## Load necessary packages
 
-```{r}
+```{r, message=FALSE}
 library(tidyverse)
 library(here)
 library(ggpmisc)
@@ -19,34 +19,22 @@ library(ggthemes)
 
 ```
 
-## Load data frames generated in data processing script
+## Load final data frame generated in data processing script
 
 ```{r}
-here()
-n1_n2_clean <- readRDS(here("data/processed_data/year2_cfx_clean.rds"))
-plant_clean <- readRDS(here("data/processed_data/year2_plant_clean.rds"))
-n1_n2_plant_combine <- readRDS(here("data/processed_data/year2_cfx_plant_combined.rds"))
-covid_combine <- readRDS(here("data/processed_data/all_covid_combined.rds"))
-all_data_combine <- readRDS(here("data/processed_data/year2_all_data_combined.rds"))
-recovery_percent <- readRDS(here("data/processed_data/recovery_percentages.rds"))
-n1_n2n2_avg <- readRDS(here("data/processed_data/year2_cfx_avg.rds"))
-prop_pos_bio <- readRDS(here("data/processed_data/prop_pos_bio.rds"))
-prop_pos_sample <- readRDS(here("data/processed_data/prop_pos_sample.rds"))
-
+data_clean <- readRDS(here("data/processed_data/final_sum_combined_data.RDS"))
 
 ```
 
-### Look at `all_data_combine`
+### Look at `data_clean`
 
 ```{r}
-tibble(all_data_combine)
+tibble(data_clean)
 ```
 
 # Data Viz
 
 ### Variation analysis
-
-Graphs to make:
 
 -   histogram of case count observations
 
@@ -60,108 +48,105 @@ Graphs to make:
 
 ### Co-variation analysis
 
-Graphs to make:
+-   Scatter plot of wastewater and clinical variables over time
 
--   wastewater viral load vs clinical case seven day moving average (linear regression)
+-   Linear regressions between wastewater and clinical variables
 
--   Wastewater viral load over time (scatter plot)
-
--   Clinical case seven day moving average over time
-
-## Single variate analysis
+## Variation analysis
 
 ### Clinical case 7 day moving average histogram
 
 ```{r}
-covid_combine %>% ggplot(aes(pcr_pos_7dma)) +
+data_clean %>% ggplot(aes((case_7dma))) +
   geom_histogram(fill = "#C06C84") +
 xlab(label = "Clinical Case Seven Day Moving Average") +
 ylab(label = "Count") +
 theme_light()
 
 ggsave(here("figures/exploratory/variate/7DMA_histo.png"))
-summary(covid_combine$pcr_pos_7dma)
+summary(data_clean$case_7dma)
 ```
+
+Slight bimodal distribution in 7DMA
 
 ### PCR positive clinical cases histogram
 
 ```{r}
-covid_combine %>% ggplot(aes(pcr_pos)) +
+data_clean %>% ggplot(aes(pcr_pos)) +
   geom_histogram(fill = '#F8B195') +
   xlab(label = "Daily Positive Clinical Cases") +
   ylab(label = "Count") +
   theme_light()
   
 ggsave(here("figures/exploratory/variate/pos_cases_histo.png"))
-summary(covid_combine$pcr_pos)
+summary(data_clean$pcr_pos)
 ```
 
-### Clinical case 14 day moving average histogram
+The distribution of daily cases is heavily skewed to the right. Log-transforming gives a more normal distribution
+
+### Clinical case percent positive tests
 
 ```{r}
-covid_combine %>% ggplot(aes(pcr_pos_14dma)) +
+data_clean %>% ggplot(aes(percent_pos_test)) +
   geom_histogram(fill = "#FF7E5A")
 
-summary(covid_combine$pcr_pos_14dma)
+summary(data_clean$percent_pos_test)
 
 ggsave(here("figures/exploratory/variate/14DMA_histo.png"))
 
 ```
 
-### Total copies in WW at county level histogram
+There is also a slight bimodal distribution with percent of positive tests, but nonetheless the distribution is right-skewed.
+
+### Wastewater viral load histogram
 
 ```{r}
-sum_daily_copies_county <- all_data_combine %>% 
-  drop_na() %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_total_copies = mean(total_copies)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_total_copies = sum(mean_total_copies))
-  
-  sum_daily_copies_county %>% ggplot(aes(log10(sum_total_copies), fill = target)) +
+    data_clean %>% ggplot(aes(avg_VL)) +
   geom_histogram() +
-      scale_fill_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-    xlab(label = "Log10 Total Daily County-Level Copies") +
+    xlab(label = "Wastewater viral load") +
     ylab(label = "Count") +
     theme_light()
   
-ggsave(here("figures/exploratory/variate/total_copies_histo.png"))
-  log10_sum_daily_copies <- log10(sum_daily_copies_county$sum_total_copies)
-  summary(log10_sum_daily_copies)
+ggsave(here("figures/exploratory/variate/VL_histo.png"))
+ 
 ```
 
-### Copies per liter histogram
+Wastewater viral load is also very right-skewed. We may need to log-transform some variables before doing more statistical analysis.
+
+### Log10 viral load histogram
 
 ```{r}
-all_data_combine %>% #filter(target == "N2") %>% 
-  drop_na() %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
-  
-  ggplot(aes(log10(sum_mean_copies_L), fill = target)) +
+data_clean %>% 
+  ggplot(aes(log10_VL)) +
+  geom_histogram()
+
+ggsave(here("figures/exploratory/variate/log10VL_histo.png"))
+
+```
+
+### Assay percent positivity histogram
+
+```{r}
+  data_clean %>% ggplot(aes(pos_rate_tr)) +
   geom_histogram() +
-      scale_fill_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-    xlab(label = "Log10 Copies Per Liter") +
+    xlab(label = "qPCR assay positivity") +
     ylab(label = "Count") +
     theme_light()
 
-ggsave(here("figures/exploratory/variate/copies_L_histo.png"))
+ggsave(here("figures/exploratory/variate/assay_pos_histo.png"))
 
 ```
+
+Again with the bimodal distribution, even more so this time.
 
 ## Co-variate analysis: time series
 
 ### Case 7 day moving average overtime
 
-```{r}
-all_data_combine %>% group_by(date) %>% 
-  summarize(mean_7dma = mean(pcr_pos_7dma),
-            mean_pcr_pos = mean(pcr_pos)) %>% 
-  ggplot(aes(x = date, y = mean_7dma)) +
-  geom_point(color = '#C06C84') +
-  geom_line(color = '#C06C84') +
+```{r, message=FALSE}
+data_clean %>% 
+  ggplot(aes(x = date, y = case_7dma)) +
+  geom_line(size =1.5, color = '#4c005c') +
   xlab(label = "Date") +
   ylab(label = "Clinical Case 7-Day Moving Average") +
   theme_light()
@@ -173,11 +158,9 @@ ggsave(here("figures/exploratory/covariate/7DMA_time_plot.png"))
 ### PCR positives per day over time
 
 ```{r}
-all_data_combine %>% group_by(date) %>% 
-  summarize(mean_pcr_pos = mean(pcr_pos)) %>% 
-  ggplot(aes(x = date, y = mean_pcr_pos)) +
-  geom_bar(stat = "identity", color = '#F8B195') +
-  geom_line(color = 'black') +
+data_clean %>% 
+  ggplot(aes(x = date, y = pcr_pos)) +
+  geom_line(color = '#4c005c', size = 2) +
   ylab(label = "Positive Cases Per Day") +
   xlab(label = "Date") +
   theme_light()
@@ -185,113 +168,81 @@ all_data_combine %>% group_by(date) %>%
 ggsave(here("figures/exploratory/covariate/pos_cases_time.png"))
 ```
 
-### Case 14 day moving average over time
+### Clinical case percent positive tests over time
 
 ```{r}
-all_data_combine %>% group_by(date) %>% 
-  summarize(mean_14_dma = mean(pcr_pos_14dma)) %>% 
- 
-   ggplot(aes(x = date, y = mean_14_dma)) +
-  geom_bar(stat = "identity", color = '#FF7E5A') +
-  geom_line() +
-  ylab(label = "Clinical Case 14-Day Moving Average") +
+data_clean %>% 
+   ggplot(aes(x = date, y = percent_pos_test)) +
+  geom_line(size = 1.5) +
+  ylab(label = "Percent of positive clinical tests") +
   xlab(label = "Date") +
   theme_light()
   
 ggsave(here("figures/exploratory/covariate/14DMA_time.png"))
 ```
 
-### Log10 viral load in wastewater over time (avg N1/N2)
+### Wastewater viral load over time
 
 ```{r}
-all_data_combine %>% #filter(target == "N2") %>% 
-  drop_na(target) %>% #remove NAs from analysis
-  group_by(date, facility) %>% #this will allow me to average the two targets
-  summarize(mean_total_copies = mean(total_copies)) %>% #average across N1 and N2
-  ungroup(facility) %>% #need to do this so I can add the avg total copies of each WRF
-  summarize(sum_total_copies = sum(mean_total_copies)) %>% #total daily county copies
-  ggplot(aes(date, log10(sum_total_copies))) +
-  geom_point(color = "#80256D") +
-  geom_line(color = "#80256D") +
+data_clean %>% 
+  ggplot(aes(date, avg_VL)) +
+  geom_line(color = "#2bce48", size = 1.5) +
    xlab(label = "Date") +
-  ylab(label = "Log10 Total Daily County-Level Copies") +
+  ylab(label = "Total Daily County-Level Copies") +
   theme_light()
 
 ggsave(here("figures/exploratory/covariate/avg_total_copies_time.png"))
 ```
 
-### Log10 viral load in wastewater (both N1 and N2)
+### Log10 wastewater viral load over time
 
 ```{r}
-all_data_combine %>% 
-  group_by(date, target, facility) %>% 
-  drop_na(target) %>% 
-  summarize(mean_total_copies = mean(total_copies)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_total_copies = sum(mean_total_copies)) %>% 
-  
-  
-  ggplot(aes(date, log10(sum_total_copies), color = target)) +
-  geom_point() +
-  geom_line() +
-  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Date") +
-  ylab(label = "Log10 County-Level Viral Load") +
-  theme_light() +
-  facet_wrap(vars(target),nrow = 2)
- 
- ggsave(here("figures/exploratory/covariate/total_copies_time.png"))
-```
+data_clean %>% 
+  ggplot(aes(date, log10_VL)) +
+  geom_line(color = "#2bce48", size = 1.5) +
+   xlab(label = "Date") +
+  ylab(label = "Log10 Total Daily County-Level Copies") +
+  theme_light()
 
-### Log10 copies per liter across time (both N1 and N2)
-
-```{r}
-all_data_combine %>%
-  drop_na(target) %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L)) %>% 
-  ggplot(aes(date, log10(sum_mean_copies_L),color = target)) +
-geom_line() +
-  geom_point() + 
-  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Date") +
-  ylab(label = "Log10 County-Level Copies Per Liter") +
-  theme_light() +
-    facet_wrap(vars(target),nrow = 2)
-
- 
- ggsave(here("figures/exploratory/covariate/copies_L_time.png"))
-
+ggsave(here("figures/exploratory/covariate/log10VL_time.png"))
 ```
 
 ### Percent positive technical replicates per sample over time
 
-```{r}
-prop_pos_sample %>% group_by(date) %>% 
-  summarize(avg_pos_rate = mean(pos_rate_tr)) %>% 
+```{r, message=FALSE}
+data_clean %>% 
+  ggplot(aes(date, pos_rate_tr)) +
+geom_line(size =1.5, color = '#634499') +
+  xlab(label = "Date") +
+  ylab(label = "Percent Positive N1 & N2 assays") +
+  theme_light()
 
-  ggplot(aes(date, avg_pos_rate)) +
-  geom_point() +
-  geom_line()
+ggsave(here("figures/exploratory/covariate/percent_pos_time_plot.png"))
 
 ```
 
-## Co-variate analysis: correlations between WW and clinical variables
-
-### Log10 copies per liter vs log10 case 7DMA (N1/N2 average)
+### Tests administered over time
 
 ```{r}
-all_data_combine %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L), 
-            mean_7dma = mean(pcr_pos_7dma)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L),
-            mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), log10(mean_7dma))) +
+data_clean %>% ggplot(aes(date, test_admin)) +
+  geom_line(size = 1.5) +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/test_admin_time.png"))
+```
+
+Tests administered drop off significantly after the beginning of 2022. In all other time series, there is a spike in mid-2022, but that spike is missing here.
+
+From here on, I will split the data before and after Februrary 28, 2022 to see how correlations change.
+
+## Co-variate analysis: correlations between WW and clinical variables
+
+### Log10 wastewater viral load vs case 7DMA
+
+```{r}
+#full dataset
+data_clean %>% 
+  ggplot(aes(log10_VL, case_7dma)) +
   geom_point(color = "#80256D") +
   stat_poly_line(color = "#80256D") +
   stat_poly_eq(color = "#80256D") +
@@ -299,169 +250,341 @@ all_data_combine %>%
   ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
   theme_light()
 
-ggsave(here("figures/exploratory/covariate/copies_L_avg_vs_7DMA.png"))
-```
+ggsave(here("figures/exploratory/covariate/log10VL_vs_7DMA.png"))
 
-### Log10 copies per liter vs log10 case 7DMA (N1 & N2)
-
-```{r}
-all_data_combine %>%  
-  drop_na(target) %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L), 
-            mean_7dma = mean(pcr_pos_7dma)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L),
-            mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), log10(mean_7dma), color = target)) +
-  geom_point() +
-  stat_poly_line() +
-  stat_poly_eq() +
-  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Log10 County-Level Copies Per Liter") +
-  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
-  theme_light()
-
-ggsave(here("figures/exploratory/covariate/copies_L_vs_7DMA.png"))
-```
-
-### Log10 Copies per Liter vs log10 daily clinical cases
-
-```{r}
-all_data_combine %>%  
-  drop_na(target) %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L), 
-            mean_pcr_pos = mean(pcr_pos)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L),
-            mean_pcr_pos = mean_pcr_pos) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), log10(mean_pcr_pos), color = target)) +
-  geom_point() +
-  stat_poly_line() +
-  stat_poly_eq() +
-  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Log10 County-Level Copies Per Liter") +
-  ylab(label = "Log10 Daily Positive Clinical Cases") +
-  theme_light()
-
-ggsave(here("figures/exploratory/covariate/copies_L_vs_pcr_pos.png"))
-```
-
-### Log10 Copies per Liter vs log10 daily clinical cases (N1 N2 average)
-
-```{r}
-all_data_combine %>%  
-  drop_na(target) %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_copies_L = mean(avg_copy_L), 
-            mean_pcr_pos = mean(pcr_pos)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies_L = sum(mean_copies_L),
-            mean_pcr_pos = mean_pcr_pos) %>% 
-  ggplot(aes(log10(sum_mean_copies_L), log10(mean_pcr_pos))) +
+#data split before FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>% 
+  ggplot(aes(log10_VL, case_7dma)) +
   geom_point(color = "#80256D") +
   stat_poly_line(color = "#80256D") +
   stat_poly_eq(color = "#80256D") +
-  xlab(label = "Log10 County-Level Copies Per Liter") +
-  ylab(label = "Log10 Daily Positive Clinical Cases") +
-  theme_light()
-
-ggsave(here("figures/exploratory/covariate/copies_L_avg_vs_pcr_pos.png"))
-```
-
-### Log10 viral load vs log10 7DMA
-
-```{r}
-all_data_combine %>% #filter(target == "N2") %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_daily_copies = mean(total_copies), 
-            mean_7dma = mean(pcr_pos_7dma)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies = sum(mean_daily_copies),
-            mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies), log10(mean_7dma))) +
-  geom_point(color = "#80256D") +
-  stat_poly_line(color = "#80256D") +
-  stat_poly_eq(color = "#80256D") +
-  xlab(label = "Log10 Daily Viral Load") +
+   xlab(label = "Log10 County-Level Copies Per Liter") +
   ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
   theme_light()
 
-ggsave(here("figures/exploratory/covariate/avg_total_copies_vs_7DMA.png"))
-```
+ggsave(here("figures/exploratory/covariate/log10VL_vs_7DMA_Y1.png"))
 
-### Log10 viral load vs log10 7DMA (N1 & N2)
-
-```{r}
-all_data_combine %>% 
-  drop_na() %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_daily_copies = mean(total_copies), 
-            mean_7dma = mean(pcr_pos_7dma)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies = sum(mean_daily_copies),
-            mean_7dma = mean(mean_7dma)) %>% 
-  ggplot(aes(log10(sum_mean_copies), log10(mean_7dma), color = target)) +
-  geom_point() +
-  stat_poly_line() +
-  stat_poly_eq() +
-  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Log10 Daily Viral Load") +
-  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
-  theme_light()
-
-ggsave(here("figures/exploratory/covariate/total_copies_vs_7DMA.png"))
-```
-
-### Log10 viral load vs log10 daily positive cases
-
-```{r}
-all_data_combine %>% 
-  drop_na() %>% 
-  group_by(date, target, facility) %>% 
-  summarize(mean_daily_copies = mean(total_copies), 
-            mean_pcr_pos = mean(pcr_pos)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies = sum(mean_daily_copies),
-            mean_pcr_pos = mean_pcr_pos) %>% 
-  ggplot(aes(log10(sum_mean_copies), log10(mean_pcr_pos), color = target)) +
-  geom_point() +
-  stat_poly_line() +
-  stat_poly_eq() +
-  scale_color_manual(name = "Target",values = c("#F67280", "#355C7D")) +
-  xlab(label = "Log10 Daily Viral Load") +
-  ylab(label = "Log10 Daily Positive Clinical Cases") +
-  theme_light()
-
-ggsave(here("figures/exploratory/covariate/total_copies_vs_pcr_pos.png"))
-```
-
-### Log10 viral load vs log10 daily positive cases
-
-```{r}
-all_data_combine %>% 
-  drop_na() %>% 
-  group_by(date, facility) %>% 
-  summarize(mean_daily_copies = mean(total_copies), 
-            mean_pcr_pos = mean(pcr_pos)) %>% 
-  ungroup(facility) %>% 
-  summarize(sum_mean_copies = sum(mean_daily_copies),
-            mean_pcr_pos = mean_pcr_pos) %>% 
-  ggplot(aes(log10(sum_mean_copies), log10(mean_pcr_pos))) +
+#data split after FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>% 
+  ggplot(aes(log10_VL, case_7dma)) +
   geom_point(color = "#80256D") +
   stat_poly_line(color = "#80256D") +
   stat_poly_eq(color = "#80256D") +
-  xlab(label = "Log10 Daily Viral Load") +
-  ylab(label = "Log10 Daily Reported Clinical Cases") +
+   xlab(label = "Log10 County-Level Copies Per Liter") +
+  ylab(label = "Log10 Clinical Case Seven Day Moving Average") +
   theme_light()
 
-ggsave(here("figures/exploratory/covariate/total_copies_avg_vs_pcr_pos.png"))
+ggsave(here("figures/exploratory/covariate/log10VL_vs_7DMA_Y2.png"))
 ```
 
-### Sample percent positive vs log10 7DMA
+RSQ value does not change between full data and the subset of dates
+
+### Log10 wastewater viral load vs tests administered
 
 ```{r}
+#full dataset
+data_clean %>%  
+  ggplot(aes(log10_VL, test_admin)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "Log10 viral load") +
+  ylab(label = "PCR tests administered") +
+  theme_light()
 
+ggsave(here("figures/exploratory/covariate/log10VL_testadmin.png"))
+
+#data split before FEB 28 2022
+data_clean %>%  
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>% 
+  ggplot(aes(log10_VL, test_admin)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "Log10 viral load") +
+  ylab(label = "PCR tests administered") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_testadmin_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>%  
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>% 
+  ggplot(aes(log10_VL, test_admin)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "Log10 viral load") +
+  ylab(label = "PCR tests administered") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_testadmin_Y2.png"))
 ```
+
+Correlations overall are weak, but the strongest positive correlation is found in the earlier dates
+
+### Log10 wastewater viral load vs percent of positive tests
+
+```{r}
+#full dataset
+data_clean %>%  
+  ggplot(aes(log10_VL, percent_pos_test)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "Log10 wastewater viral load") +
+  ylab(label = "Percent of positive clinical cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_percentcase.png"))
+
+#data split before FEB 28 2022
+data_clean %>%  
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>%
+  ggplot(aes(log10_VL, percent_pos_test)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "Log10 wastewater viral load") +
+  ylab(label = "Percent of positive clinical cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_percentcase_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>%  
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>%
+  ggplot(aes(log10_VL, percent_pos_test)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "Log10 wastewater viral load") +
+  ylab(label = "Percent of positive clinical cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_percentcase_Y2.png"))
+```
+
+RSQ is slightly lower in later dates than in full data set, but does not change in earlier dates
+
+### Log10 wastewater viral load vs daily reported cases
+
+```{r}
+#full dataset
+data_clean %>%  
+  ggplot(aes(log10_VL, log10(pcr_pos))) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq(color = "#80256D") +
+  xlab(label = "Log10 wastwater viral load") +
+  ylab(label = "Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_dailycases.png"))
+
+#data split before FEB 28 2022
+data_clean %>%  
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>%
+  ggplot(aes(log10_VL, log10(pcr_pos))) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq(color = "#80256D") +
+  xlab(label = "Log10 wastwater viral load") +
+  ylab(label = "Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_dailycases_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>%  
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>%
+  ggplot(aes(log10_VL, log10(pcr_pos))) +
+  geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
+  stat_poly_eq(color = "#80256D") +
+  xlab(label = "Log10 wastwater viral load") +
+  ylab(label = "Daily Positive Clinical Cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/log10VL_dailycases_Y2.png"))
+```
+
+RSQ is higher is the data splits than in the full set. I'm not sure what to think of this, but it could be due to the high error associated with this metric.
+
+### Assay positivity vs 7DMA
+
+```{r}
+#full dataset
+data_clean %>% 
+  ggplot(aes(pos_rate_tr, case_7dma)) +
+  geom_point(color = "#00b0ba") +
+  stat_poly_line(color = "#00b0ba") +
+  stat_poly_eq(color = "black") +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_vs_7DMA.png"))
+
+#data split before FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>%
+  ggplot(aes(pos_rate_tr, case_7dma)) +
+  geom_point(color = "#00b0ba") +
+  stat_poly_line(color = "#00b0ba") +
+  stat_poly_eq(color = "black") +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_vs_7DMA_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>%
+  ggplot(aes(pos_rate_tr, case_7dma)) +
+  geom_point(color = "#00b0ba") +
+  stat_poly_line(color = "#00b0ba") +
+  stat_poly_eq(color = "black") +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_vs_7DMA_Y2.png"))
+```
+
+No significant change in data splits
+
+### Assay positivity vs tests administered
+
+```{r}
+#full dataset
+data_clean %>% 
+  ggplot(aes(pos_rate_tr,test_admin)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "PCR tests administered") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_testadmin.png"))
+
+#data split before FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>%
+  ggplot(aes(pos_rate_tr,test_admin)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "PCR tests administered") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_testadmin_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>%
+  ggplot(aes(pos_rate_tr,test_admin)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "PCR tests administered") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_testadmin_Y2.png"))
+```
+
+RSQ is low across all data sets, but highest in earlier dates than in full data or later dates
+
+### Assay positivity vs percent of positive tests
+
+```{r}
+#full dataset
+data_clean %>% 
+  ggplot(aes(pos_rate_tr,percent_pos_test)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "PCR test positivity") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_testpos.png"))
+
+#data split before FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>%
+  ggplot(aes(pos_rate_tr,percent_pos_test)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "PCR test positivity") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_testpos_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>%
+  ggplot(aes(pos_rate_tr,percent_pos_test)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "PCR test positivity") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_testpos_Y2.png"))
+```
+
+There is a slight decrease in RSQ in the later dates than in the full set or the earlier dates.
+
+### Assay positivity vs daily reported cases
+
+```{r}
+#full dataset
+data_clean %>% 
+  ggplot(aes(pos_rate_tr,pcr_pos)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "Daily reported cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_dailycases.png"))
+
+#data split before FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2020-06-30"), as.Date("2022-02-28"))) %>%
+  ggplot(aes(pos_rate_tr,pcr_pos)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "Daily reported cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_dailycases_Y1.png"))
+
+#data split after FEB 28 2022
+data_clean %>% 
+  filter(between(date, as.Date("2022-02-28"), as.Date("2022-12-21"))) %>%
+  ggplot(aes(pos_rate_tr,pcr_pos)) +
+  geom_point() +
+  stat_poly_line() +
+  stat_poly_eq() +
+  xlab(label = "qPCR assay positivity") +
+  ylab(label = "Daily reported cases") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/assaypos_dailycases_Y2.png"))
+```
+
+The highest RSQ value was in the earlier dates than in the full set or later dates

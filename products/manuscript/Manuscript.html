@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Leah Lariscy">
-<meta name="dcterms.date" content="2023-03-18">
+<meta name="dcterms.date" content="2023-04-18">
 
-<title>Data Analysis Project</title>
+<title>Wastewater Surveillance for SARS-CoV-2 Data Analysis Project</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -55,6 +55,8 @@ div.csl-indent {
 <link href="Manuscript_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Manuscript_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+<link href="Manuscript_files/libs/table1-1.0/table1_defaults.css" rel="stylesheet">
+
 
 </head>
 
@@ -66,7 +68,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Analysis Project</h1>
+<h1 class="title">Wastewater Surveillance for SARS-CoV-2 Data Analysis Project</h1>
 </div>
 
 
@@ -83,7 +85,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 18, 2023</p>
+      <p class="date">April 18, 2023</p>
     </div>
   </div>
   
@@ -96,36 +98,37 @@ div.csl-indent {
 <div class="cell">
 
 </div>
-<section id="summaryabstract" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Summary/Abstract</h1>
-<p><em>Write a summary of your project.</em></p>
+<section id="abstract" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Abstract</h1>
+<p>Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases.</p>
 <div style="page-break-after: always;"></div>
 </section>
 <section id="introduction" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Introduction</h1>
 <section id="general-background-information" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="general-background-information"><span class="header-section-number">2.1</span> General Background Information</h2>
-<p>Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases.</p>
+<p>Paragraph 1: Impact of COVID-19 on public health, clinical case under-reporting</p>
+<p>Paragraph 2: Wastewater surveillance is possible because of excretory functions and stability of viral particles in wastewater, surveillance prevalence and correlations with clinical case data</p>
+<p>Paragraph 3: Surveillance program background. Aims, County-level parallel analysis of wastewater surveillance data and reported clinical cases</p>
 </section>
 <section id="description-of-data-and-data-source" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="description-of-data-and-data-source"><span class="header-section-number">2.2</span> Description of data and data source</h2>
-<section id="wastewater-sars-cov-2-surveillance-data" class="level3" data-number="2.2.1">
-<h3 data-number="2.2.1" class="anchored" data-anchor-id="wastewater-sars-cov-2-surveillance-data"><span class="header-section-number">2.2.1</span> Wastewater SARS-CoV-2 surveillance data</h3>
-<p>24-hour composite wastewater samples were collected twice weekly from three treatment facilities in Clarke County and refrigerated until ready for extraction. RNA extractions were performed for each sample in replicates (n=6). Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) and SARS-CoV-2 specific primer-probe pairs were used to amplify each RNA extraction replicate in technical replicates (n=3). The concentration per reaction of each gene target was determined by the amplification standard curve from positive controls corresponding to the targets.</p>
-<p>Wastewater influent flow data, including total daily flow volume and total suspended solids rate, were collected for each corresponding sample date. This was used to estimate the viral load of SARS-CoV-2, also known as total daily copies.</p>
+<section id="sars-cov-2-wastewater-surveillance-data" class="level3">
+<h3 class="anchored" data-anchor-id="sars-cov-2-wastewater-surveillance-data">SARS-CoV-2 wastewater surveillance data</h3>
+<p>Sample collection for wastewater surveillance began June 30, 2020 and occurred twice weekly (excluding major holidays) through December 21, 2022. Raw wastewater influent was collected from three Wastewater Treatment Plants in Athens-Clarke County and viral RNA was extracted. RT-qPCR was used to calculate the cycle threshold (Ct) value of each reaction, which is used to estimate SARS-CoV-2 copies per liter of wastewater in the data cleaning process (Section 3.2).</p>
 </section>
-<section id="covid-19-testing-data" class="level3" data-number="2.2.2">
-<h3 data-number="2.2.2" class="anchored" data-anchor-id="covid-19-testing-data"><span class="header-section-number">2.2.2</span> COVID-19 testing data</h3>
-<p>COVID-19 data sets were downloaded from the Georgia Department of Public Health website (accessed Jan 2023), of which a subset was selected which includes symptom onset, PCR test, and PCR positive test data for each date since the first case was detected.</p>
+<section id="wastewater-treatment-plant-data" class="level3">
+<h3 class="anchored" data-anchor-id="wastewater-treatment-plant-data">Wastewater treatment plant data</h3>
+<p>Wastewater influent flow data, including millions of gallons per day (MGD) and total suspended solids (TSS), were collected for each corresponding sampling date.</p>
+</section>
+<section id="covid-19-clinical-data" class="level3">
+<h3 class="anchored" data-anchor-id="covid-19-clinical-data">COVID-19 clinical data</h3>
+<p>COVID-19 clinical data were obtained from the Georgia Department of Public Health website <span class="citation" data-cites="COVID19StatusReport">(<a href="#ref-COVID19StatusReport" role="doc-biblioref"><span>“<span>COVID-19 Status Report</span>,”</span> n.d.</a>)</span> which includes COVID-19 reported clinical case data for the state of Georgia. These data include reported cases, demographics, comorbidities, deaths, and more. However, not all data is necessary for analysis and will be subset to include only symptom onset, positive case, and administered test data for Clarke County. (Section 3.2).</p>
 </section>
 </section>
-<section id="questionshypotheses-to-be-addressed" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="questionshypotheses-to-be-addressed"><span class="header-section-number">2.3</span> Questions/Hypotheses to be addressed</h2>
-<p>Is there a relationship between viral load and clinical case observations?</p>
-<p>Is there a relationship between qPCR percent positive and clinical case observations?</p>
-<p>What do viral load trends look like over time?</p>
-<p>What do clinical case trends look like over time?</p>
-<p>How do each of these temporal trends compare to one another over time?</p>
+<section id="hypotheses-to-be-addressed" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="hypotheses-to-be-addressed"><span class="header-section-number">2.3</span> Hypotheses to be addressed</h2>
+<p>This study aims to conduct a parallel analysis between SARS-CoV-2 wastewater surveillance data and reported COVID-19 clinical case data in Athens-Clarke County, Georgia. It is expected that wastewater quantifications and reported case data will have a positive linear relationship. It is also hypothesized that certain wastewater-clinical relationships will be stronger than others, see Table 1 for variables of interest.</p>
 <div style="page-break-after: always;"></div>
 </section>
 </section>
@@ -133,85 +136,107 @@ div.csl-indent {
 <h1 data-number="3"><span class="header-section-number">3</span> Methods</h1>
 <section id="data-acquisition" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="data-acquisition"><span class="header-section-number">3.1</span> Data acquisition</h2>
-<p><strong>Wastewater SARS-CoV-2 viral load data</strong> was obtained through weekly surveillance efforts utilizing RT-qPCR methods (Section 2.2).</p>
-<p><strong>WWTP flow data</strong> was obtained through data share directly from plant representatives.</p>
-<p><strong>COVID-19 case data</strong> was downloaded from Georgia Department of Public Health’s COVID-19 Status Report Page in January 2023 [x].</p>
+<section id="wastewater-surveillance-data" class="level3">
+<h3 class="anchored" data-anchor-id="wastewater-surveillance-data">Wastewater surveillance data</h3>
+<p>24-hour composite raw wastewater influent samples were collected twice-weekly from three treatment facilities in Clarke County and stored at 4°C until ready for extraction. 280 𝜇L of wastewater in replicates (n=6) was aliquoted and direct RNA extraction (Zymo Research, R2042) was performed on the same day as sample collection.Each extraction replicate was reverse transcribed and amplified using RT-qPCR and a SARS-CoV-2 specific primer-probe panel (IDT, 10006713), done in technical replicates (n=3). As part of the qPCR panel, two gene targets on the N-gene of the SARS-CoV-2 genome were used for amplification. The N1 and N2 gene targets were chosen due to their conservation across variants and act as universal detectors of the virus [@]. Cycle threshold (Ct) values were then calculated for each PCR reaction, which were then used to estimate SARS-CoV-2 viral load (See Section 3.2 for more detail).</p>
+</section>
+<section id="wastewater-treatment-plant-data-1" class="level3">
+<h3 class="anchored" data-anchor-id="wastewater-treatment-plant-data-1">Wastewater treatment plant data</h3>
+<p>For each treatment plant and collection date, MGD and TSS was shared by plant operators directly with our team and compiled throughout the study period.</p>
+</section>
+<section id="covid-19-clinical-data-1" class="level3">
+<h3 class="anchored" data-anchor-id="covid-19-clinical-data-1">COVID-19 clinical data</h3>
+<p>Reported case and testing data were downloaded from Georgia Department of Public Health’s COVID-19 Status Report Page in January 2023.</p>
+</section>
 </section>
 <section id="data-import-and-cleaning" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="data-import-and-cleaning"><span class="header-section-number">3.2</span> Data import and cleaning</h2>
-<section id="rt-qpcr-data" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="rt-qpcr-data"><span class="header-section-number">3.2.1</span> RT-qPCR data</h3>
-<p>For each target, viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the cycle threshold value (Ct) using the appropriate standard curve equation. For reactions with no Ct value (no detection), cp/uL was set to the theoretical limit of detection (LOD). From this, N1 and N2 data frames were combined and copies per liter (cp/L) of sample for both targets was estimated using Equation 1.</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 14,787
-Columns: 8
-$ date                 &lt;date&gt; 2021-07-06, 2021-07-06, 2021-07-06, 2021-07-06, …
-$ facility             &lt;ord&gt; C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C, C…
-$ target               &lt;chr&gt; "N1", "N1", "N1", "N1", "N1", "N1", "N1", "N1", "…
-$ biological_replicate &lt;chr&gt; "A", "A", "A", "B", "B", "B", "C", "C", "C", "A",…
-$ collection_num       &lt;dbl&gt; 93, 93, 93, 93, 93, 93, 93, 93, 93, 93, 93, 93, 9…
-$ ct                   &lt;dbl&gt; 37.21, 38.48, 36.16, NA, NA, 38.49, NA, NA, NA, N…
-$ copy_num_uL_rxn      &lt;dbl&gt; 0.4679393, 0.2043360, 0.9283227, 0.0040000, 0.004…
-$ copy_num_L           &lt;dbl&gt; 401090.861, 175145.119, 795705.184, 3428.571, 342…</code></pre>
-</div>
-</div>
+<section id="calculating-wastewater-viral-load" class="level3">
+<h3 class="anchored" data-anchor-id="calculating-wastewater-viral-load">Calculating wastewater viral load</h3>
+<p>Amplification standard curve equations where generated from serially diluted synthetic controls (Supplementary Table). This was done for N1 and N2 gene targets for both surveillance years because RT-qPCR methods were altered after the first year. Viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the Ct value using the appropriate standard curve equation. For reactions with no detection, concentration was set to the theoretical limit of detection (0.004 cp/uL). Data sets for each standard curve was transformed separately before being combined. After combining all qPCR data, copies per liter (cp/L) of wastewater was calculated for each technical replicate using Equation 1. Average cp/L of wastewater was determined by taking the mean of all technical replicates per sample per gene target.</p>
+<p>INSERT EQUATION 1</p>
+<p>WWTP data was then transformed by converting the flow rate from millions of gallons per day to liters per day. qPCR data was then combined with WWTP data and total viral load per sample was calculated by multiplying average copies per liter by the flow rate. Average viral load for each sample was then determined by taking the mean of the viral load for both N1 and N2 gene targets. County-level daily viral load was calculated by taking the sum of the average viral load from each of the three WWTP samples.</p>
 </section>
-<section id="treatment-plant-flow-data" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="treatment-plant-flow-data"><span class="header-section-number">3.2.2</span> Treatment plant flow data</h3>
-<p>For each collection date, corresponding , were combined with the qPCR data. Viral load (total daily viral copies) was then estimated by multiplying concentration estimates by daily flow volume (Equation 2).</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 798
-Columns: 9
-$ date              &lt;date&gt; 2021-07-06, 2021-07-06, 2021-07-06, 2021-07-06, 202…
-$ facility          &lt;ord&gt; A, A, B, B, C, C, A, A, B, B, C, C, A, A, B, B, C, C…
-$ target            &lt;chr&gt; "N1", "N2", "N1", "N2", "N1", "N2", "N1", "N2", "N1"…
-$ collection_num    &lt;dbl&gt; 93, 93, 93, 93, 93, 93, 95, 95, 95, 95, 95, 95, 96, …
-$ avg_copy_L        &lt;dbl&gt; 24508.961, 3428.571, 44932.916, 3428.571, 173676.686…
-$ avg_copy_uL_rxn   &lt;dbl&gt; 0.02859379, 0.00400000, 0.05242174, 0.00400000, 0.20…
-$ influent_flow_L   &lt;dbl&gt; 18586372, 18586372, 10977694, 10977694, 7078720, 707…
-$ influent_tss_mg_l &lt;dbl&gt; 187, 187, 272, 272, 96, 96, 260, 260, 82, 82, 236, 2…
-$ total_copies      &lt;dbl&gt; 4.555327e+11, 6.372470e+10, 4.932598e+11, 3.763781e+…</code></pre>
-</div>
-</div>
+<section id="calculating-wastewater-qpcr-assay-positivity" class="level3">
+<h3 class="anchored" data-anchor-id="calculating-wastewater-qpcr-assay-positivity">Calculating wastewater qPCR assay positivity</h3>
+<p>qPCR assay positivity was determined for each collection date by finding the proportion of assays that detected SARS-CoV-2 out of the total number of assays performed. This includes all biological and technical replicate assays that were performed for a given sampling date. County-level assay positivity data was then combined with county-level viral load data.</p>
 </section>
-<section id="covid-testing-data" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="covid-testing-data"><span class="header-section-number">3.2.3</span> COVID testing data</h3>
-<p>Data frames were combined into one and filtered to include only data pertaining to Clarke County. Proportion of positive tests per day was calculated by dividing PCR positive tests by total PCR tests.</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 1,090
-Columns: 8
-$ date                &lt;date&gt; 2020-02-01, 2020-02-02, 2020-02-03, 2020-02-04, 2…
-$ cases.symptom.onset &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,…
-$ cases.reported      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-$ pcr_tests           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-$ pcr_pos             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-$ pcr_pos_7dma        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-$ pcr_pos_14dma       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
-$ prop_pos            &lt;dbl&gt; NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, …</code></pre>
-</div>
-</div>
+<section id="adding-covid-19-clinical-data" class="level3">
+<h3 class="anchored" data-anchor-id="adding-covid-19-clinical-data">Adding COVID-19 clinical data</h3>
+<p>Of the downloaded Georgia DPH data, the data set containing positive case counts was retained. Of these data, daily reported case counts and case seven-day moving average were kept for analysis. These data were then subset to include only data from Clarke County collected during the surveillance period and combined with wastewater data.</p>
 </section>
 </section>
 <section id="statistical-analysis" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="statistical-analysis"><span class="header-section-number">3.3</span> Statistical analysis</h2>
-<section id="exploratory-analysis" class="level3" data-number="3.3.1">
-<h3 data-number="3.3.1" class="anchored" data-anchor-id="exploratory-analysis"><span class="header-section-number">3.3.1</span> Exploratory analysis</h3>
-<p>Wastewater and clinical data over time, linear regression model of wastewater vs clinical case data</p>
-</section>
-<section id="predicting-clinical-case-levels-with-wastewater-surveillance-data" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="predicting-clinical-case-levels-with-wastewater-surveillance-data"><span class="header-section-number">3.3.2</span> Predicting clinical case levels with wastewater surveillance data</h3>
-<p>Wastewater data as predictor for clinical case outcomes</p>
 <div style="page-break-after: always;"></div>
-</section>
 </section>
 </section>
 <section id="results" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Results</h1>
-<section id="descriptive-analysis" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="descriptive-analysis"><span class="header-section-number">4.1</span> Descriptive analysis</h2>
+<div class="cell">
+<div class="cell-output-display">
+
+<div class="Rtable1"><table class="Rtable1">
+<thead>
+<tr>
+<th class="rowlabel firstrow lastrow"></th>
+<th class="firstrow lastrow"><span class="stratlabel">Overall<br><span class="stratn">(N=224)</span></span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="rowlabel firstrow">Log10 Viral Load</td>
+<td class="firstrow"></td>
+</tr>
+<tr>
+<td class="rowlabel">Mean (SD)</td>
+<td>12.6 (0.719)</td>
+</tr>
+<tr>
+<td class="rowlabel lastrow">Median [Min, Max]</td>
+<td class="lastrow">12.6 [11.0, 13.9]</td>
+</tr>
+<tr>
+<td class="rowlabel firstrow">Assay Positivity</td>
+<td class="firstrow"></td>
+</tr>
+<tr>
+<td class="rowlabel">Mean (SD)</td>
+<td>43.8 (32.3)</td>
+</tr>
+<tr>
+<td class="rowlabel lastrow">Median [Min, Max]</td>
+<td class="lastrow">39.4 [0, 99.1]</td>
+</tr>
+<tr>
+<td class="rowlabel firstrow">Clinical Case Seven-Day Moving Average</td>
+<td class="firstrow"></td>
+</tr>
+<tr>
+<td class="rowlabel">Mean (SD)</td>
+<td>11.7 (9.13)</td>
+</tr>
+<tr>
+<td class="rowlabel lastrow">Median [Min, Max]</td>
+<td class="lastrow">9.35 [0.200, 34.7]</td>
+</tr>
+<tr>
+<td class="rowlabel firstrow">Daily Reported Clinical Cases</td>
+<td class="firstrow"></td>
+</tr>
+<tr>
+<td class="rowlabel">Mean (SD)</td>
+<td>44.5 (62.4)</td>
+</tr>
+<tr>
+<td class="rowlabel lastrow">Median [Min, Max]</td>
+<td class="lastrow">25.0 [0, 365]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <div id="tbl-summarytable" class="cell tbl-parent quarto-layout-panel anchored" data-tbl-cap="Data summary table.">
 
 </div>
@@ -242,9 +267,8 @@ $ prop_pos            &lt;dbl&gt; NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, N
 <p></p><figcaption class="figure-caption">Wastewater viral load over time</figcaption><p></p>
 </figure>
 </div>
-</section>
-<section id="basic-statistical-analysis" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="basic-statistical-analysis"><span class="header-section-number">4.2</span> Basic statistical analysis</h2>
+<section id="basic-statistical-analysis" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="basic-statistical-analysis"><span class="header-section-number">4.1</span> Basic statistical analysis</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/total_copies_avg_vs_7DMA.png" class="img-fluid figure-img"></p>
@@ -252,8 +276,8 @@ $ prop_pos            &lt;dbl&gt; NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, N
 </figure>
 </div>
 </section>
-<section id="full-analysis" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="full-analysis"><span class="header-section-number">4.3</span> Full analysis</h2>
+<section id="full-analysis" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="full-analysis"><span class="header-section-number">4.2</span> Full analysis</h2>
 <div id="tbl-resulttable2" class="cell tbl-parent quarto-layout-panel anchored" data-tbl-cap="Linear model fit table.">
 
 </div>
@@ -274,8 +298,8 @@ $ prop_pos            &lt;dbl&gt; NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, N
 <h2 data-number="5.3" class="anchored" data-anchor-id="conclusions"><span class="header-section-number">5.3</span> Conclusions</h2>
 <p><em>What are the main take-home messages?</em></p>
 <p><em>Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end</em></p>
-<p>This paper <span class="citation" data-cites="leek2015">(<a href="#ref-leek2015" role="doc-biblioref">Leek &amp; Peng, 2015</a>)</span> discusses types of analyses.</p>
-<p>These papers <span class="citation" data-cites="mckay2020 mckay2020a">(<a href="#ref-mckay2020" role="doc-biblioref">McKay, Ebell, Billings, et al., 2020</a>; <a href="#ref-mckay2020a" role="doc-biblioref">McKay, Ebell, Dale, Shen, &amp; Handel, 2020</a>)</span> are good examples of papers published using a fully reproducible setup similar to the one shown in this template.</p>
+<p>This paper <span class="citation" data-cites="leek2015">(<a href="#ref-leek2015" role="doc-biblioref"><strong>leek2015?</strong></a>)</span> discusses types of analyses.</p>
+<p>These papers <span class="citation" data-cites="mckay2020 mckay2020a">(<a href="#ref-mckay2020" role="doc-biblioref"><strong>mckay2020?</strong></a>; <a href="#ref-mckay2020a" role="doc-biblioref"><strong>mckay2020a?</strong></a>)</span> are good examples of papers published using a fully reproducible setup similar to the one shown in this template.</p>
 <p>Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal <a href="https://www.zotero.org/styles">are available</a>. You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word <code>references.bib</code> but giving it a more descriptive name is probably better.</p>
 <div style="page-break-after: always;"></div>
 </section>
@@ -286,14 +310,8 @@ $ prop_pos            &lt;dbl&gt; NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, N
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">6 References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="doc-bibliography">
-<div id="ref-leek2015" class="csl-entry" role="doc-biblioentry">
-Leek, J. T., &amp; Peng, R. D. (2015). Statistics. <span>What</span> is the question? <em>Science (New York, N.Y.)</em>, <em>347</em>(6228), 1314–1315. <a href="https://doi.org/10.1126/science.aaa6146">https://doi.org/10.1126/science.aaa6146</a>
-</div>
-<div id="ref-mckay2020" class="csl-entry" role="doc-biblioentry">
-McKay, B., Ebell, M., Billings, W. Z., Dale, A. P., Shen, Y., &amp; Handel, A. (2020). Associations <span>Between Relative Viral Load</span> at <span>Diagnosis</span> and <span>Influenza A Symptoms</span> and <span>Recovery</span>. <em>Open Forum Infectious Diseases</em>, <em>7</em>(11), ofaa494. <a href="https://doi.org/10.1093/ofid/ofaa494">https://doi.org/10.1093/ofid/ofaa494</a>
-</div>
-<div id="ref-mckay2020a" class="csl-entry" role="doc-biblioentry">
-McKay, B., Ebell, M., Dale, A. P., Shen, Y., &amp; Handel, A. (2020). Virulence-mediated infectiousness and activity trade-offs and their impact on transmission potential of influenza patients. <em>Proceedings. Biological Sciences</em>, <em>287</em>(1927), 20200496. <a href="https://doi.org/10.1098/rspb.2020.0496">https://doi.org/10.1098/rspb.2020.0496</a>
+<div id="ref-COVID19StatusReport" class="csl-entry" role="doc-biblioentry">
+<span>COVID-19 Status Report</span>. (n.d.). https://dph.georgia.gov/covid-19-status-report.
 </div>
 </div></section></div></main>
 <!-- /main column -->

@@ -1,0 +1,131 @@
+---
+title: "Calculating percent positive assays"
+author: "Leah Lariscy"
+date: "2023-03-26"
+output: html_document
+---
+
+## Load packages
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+## Load data
+
+```{r}
+wbe <- readRDS(here("data/processed_data/year2_cfx_clean.rds"))
+```
+
+## Calculate percent positive qPCR assays
+
+```{r}
+wbe_pos <- wbe %>% group_by(date, target, facility, biological_replicate) %>% 
+  #n positive per biological rep
+  summarise(n=n(),
+            n.miss=sum(is.na(ct)),
+            n.pos=n-n.miss) %>% 
+  #n positive per target/facility/date
+  ungroup(biological_replicate) %>% 
+  summarise(n=sum(n),
+            n.miss=sum(n.miss),
+            n.pos=n-n.miss) %>% 
+  #n positive per target/date
+  ungroup(facility) %>% 
+  summarise(n=sum(n),
+            n.miss=sum(n.miss),
+            n.pos=n-n.miss) %>%
+  ungroup()
+
+
+wbe_pos
+```
+
+### Separate N1 and N2
+
+```{r}
+wbe_pos_n1 <- wbe_pos %>% filter(target == "N1")
+
+wbe_pos_n2 <- wbe_pos %>% filter(target == "N2")
+
+saveRDS(wbe_pos_n1, here("data/processed_data/percent_pos_n1.rds"))
+saveRDS(wbe_pos_n2, here("data/processed_data/percent_pos_n2.rds"))
+```
+
+### Sum N1 and N2
+
+```{r}
+# n positive per date
+wbe_pos_both <- wbe_pos %>% group_by(date) %>% 
+   summarise(n=sum(n),
+            n.miss=sum(n.miss),
+            n.pos=n-n.miss) %>% 
+  mutate(percent_pos = (n.pos/n)*100) 
+wbe_pos_both
+```
+
+### Avg N1 and N2
+
+```{r}
+wbe_pos_avg <- wbe_pos %>% group_by(date) %>% 
+   summarise(n=sum(n),
+            n.miss=sum(n.miss),
+            n.pos=n-n.miss) %>% 
+  mutate(percent_pos = (n.pos/n)*100) 
+wbe_pos_avg
+```
+
+## Load COVID data and combine with qPCR data
+
+```{r}
+covid <- readRDS(here("data/processed_data/all_covid_combined.rds"))
+
+covid_n1 <- full_join(wbe_pos_n1, covid, by = "date") %>% drop_na(target)
+
+covid_n2 <- full_join(wbe_pos_n2, covid, by = "date") %>% drop_na(target)
+
+covid_both <- full_join(wbe_pos_both, covid, by = "date") %>% drop_na(n)
+
+saveRDS(covid_n1, here("data/processed_data/covid_ww_n1.rds"))
+saveRDS(covid_n2, here("data/processed_data/covid_ww_n2.rds"))
+saveRDS(covid_both, here("data/processed_data/covid_ww_both.rds"))
+```
+
+```{r}
+covid_both %>% ggplot(aes(date, percent_pos)) +
+geom_line(size =1.5, color = '#634499') +
+  xlab(label = "Date") +
+  ylab(label = "Percent Positive qPCR assays") +
+  theme_light()
+
+ggsave(here("figures/exploratory/covariate/percent_pos_time_plot.png"))
+```
+
+```{r}
+  covid_both %>% 
+    filter(between(date, as.Date("2020-06-30"), as.Date("2022-12-21"))) %>% 
+    ggplot(aes(percent_pos, pcr_pos_7dma)) +
+  geom_point(color = "#634499") +
+  stat_poly_line(color = "#634499") +
+  stat_poly_eq(color = "black") +
+  xlab(label = "Percent Positve N1 & N2 Assays") +
+  ylab(label = "Clinical Case Seven Day Moving Average") +
+  theme_light() 
+  
+  ggsave(here("figures/exploratory/covariate/PP_vs_7DMA.png"))
+```
+
+```{r}
+ covid_both %>% 
+    filter(between(date, as.Date("2020-06-30"), as.Date("2021-06-30"))) %>% 
+    ggplot(aes(percent_pos, pcr_pos)) +
+  geom_point(color = "#4dd091") +
+  stat_poly_line(color = "#4dd091") +
+  stat_poly_eq(color = "black") +
+  xlab(label = "Percent Positve N1 & N2 Assays") +
+  ylab(label = "Daily Reported Clinical Cases") +
+  theme_light() 
+ 
+ ggsave(here("figures/exploratory/covariate/PP_daily_cases.png"))
+```
