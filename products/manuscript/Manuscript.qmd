@@ -93,68 +93,27 @@ Of the downloaded Georgia DPH data, the data set containing positive case counts
 
 ## Statistical analysis
 
-### Feature selection
-
-Two wastewater and two clinical case metrics were identified as features of interest during exploratory analysis steps where
-
-### Data splitting
-
-Compare relationship differences between year 1 and year 2
-
-### Model training and fitting
-
-Trained linear regression models on year 1 data using cross validation
-
-Performance validation, metrics?
-
-### Model testing
-
-The trained model was then tested on the year 2 data
+Through exploration of time series and wastewater-clinical correlations, prominent relationships were identified for further analysis. Wastewater variables were used to train linear regression models to predict clinical observations. Model performance metrics (RSQ and RMSE) were assessed against each other and against a null model. Cross-validation was used to validate performances. The best model was then determined and used to predict values in a new set of data.
 
 {{< pagebreak >}}
 
 # Results
+
+## Time-series analysis
+
+## Correlation analysis
+
+Two wastewater and two clinical case metrics were identified as features of interest during exploratory analysis steps where stronger wastewater-clinical correlations were observed between these variables than in others. These include wastewater viral load, wastewater assay positivity rate, clinical case seven-day moving average, and test administration positivity rate (Table 1).
 
 ```{r, echo=FALSE, message=FALSE}
 
 readRDS(here("results/manuscript_table1.rds"))
 ```
 
-```{r}
-#| label: tbl-summarytable
-#| tbl-cap: "Data summary table."
-#| echo: FALSE
-#resulttable=readRDS("../../results/summarytable.rds")
-#knitr::kable(resulttable)
-```
+## Model analysis
 
-![Distribution of recorded seven-day moving average for each day](images/7DMA_histo.png)
-
-![Distribution of viral load per sample collection per target](images/total_copies_histo.png)
-
-```{r}
-#| label: fig-result
-#| fig-cap: "Height and weight stratified by gender."
-#| echo: FALSE
-#knitr::include_graphics(here("results","height_weight_stratified.png"))
-```
-
-![Clinical case seven-day moving average over time](images/7DMA_time_plot.png)
-
-![Wastewater viral load over time](images/avg_total_copies_time.png)
-
-## Basic statistical analysis
-
-![Linear regression of viral load vs case seven-day moving average](images/total_copies_avg_vs_7DMA.png)
-
-## Full analysis
-
-```{r}
-#| label: tbl-resulttable2
-#| tbl-cap: "Linear model fit table."
-#| echo: FALSE
-#resulttable2 = readRDS(here("results","resulttable2.rds"))
-#knitr::kable(resulttable2)
+```{r, echo=FALSE, fig.cap="Observed Clinical Cases vs Wastewater Predictions"}
+include_graphics(here("figures/modeling/assaypos_7dma.png"))
 ```
 
 {{< pagebreak >}}

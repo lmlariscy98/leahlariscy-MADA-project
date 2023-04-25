@@ -496,11 +496,11 @@ final_data_sum <- final_data %>% group_by(date, collection_num, target) %>%
   mutate(log10_VL = log10(avg_VL)) %>% 
   drop_na()
 
-table1::label(final_data_sum$log10_VL) <- "Log10 Viral Load"
-table1::label(final_data_sum$pos_rate_tr) <- "Assay Positivity"
-table1::label(final_data_sum$case_7dma) <- "Clinical Case Seven-Day Moving Average"
-table1::label(final_data_sum$pcr_pos) <- "Daily Reported Clinical Cases"
-table1::label(final_data_sum$percent_pos_test) <- "PCR Test Positivity"
+#table1::label(final_data_sum$log10_VL) <- "Log10 Viral Load"
+#table1::label(final_data_sum$pos_rate_tr) <- "Assay Positivity"
+#table1::label(final_data_sum$case_7dma) <- "Clinical Case Seven-Day Moving Average"
+#table1::label(final_data_sum$pcr_pos) <- "Daily Reported Clinical Cases"
+#table1::label(final_data_sum$percent_pos_test) <- "PCR Test Positivity"
 
 saveRDS(final_data_sum, here("data/processed_data/final_sum_combined_data.RDS"))
 

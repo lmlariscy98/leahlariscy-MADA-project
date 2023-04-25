@@ -1,0 +1,138 @@
+---
+title: "log10VL_testpos_model"
+author: "Leah Lariscy"
+date: "2023-03-17"
+output: html_document
+---
+
+## Predictor and Outcome
+
+Predictor: log10 wastewater viral load
+
+Outcome: Clinical case seven day moving average
+
+## Load packages and data
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(here)
+```
+
+```{r}
+train_data <- readRDS(here("data/modeling_data/training_data.RDS"))
+test_data <- readRDS(here("data/modeling_data/testing_data.RDS"))
+```
+
+## Define the model
+
+The outcome is continuous, so we will use a linear regression model
+
+```{r}
+lm_mod <- linear_reg()
+```
+
+## Create recipe using training data
+
+This is where we will set log10VL as predictor and testpos as outcome
+
+```{r}
+recipe_testpos <- recipe(percent_pos_test ~ log10_VL, data = train_data)
+```
+
+## Create workflow
+
+```{r}
+workflow_testpos <- workflow() %>% 
+  add_model(lm_mod) %>% 
+  add_recipe(recipe_testpos)
+```
+
+## Create model using workflow
+
+```{r}
+set.seed(626)
+fit_testpos <- workflow_testpos %>% 
+  fit(data = train_data)
+
+tidy(fit_testpos)
+```
+
+## Use model on the training data
+
+```{r}
+aug_test <- augment(fit_testpos, train_data)
+aug_test %>% select(percent_pos_test, .pred)
+```
+
+## Use RMSE and RSQ to evaluate model performance
+
+```{r}
+rmse <- aug_test %>% rmse(truth = percent_pos_test, .pred)
+rsq <- aug_test %>% rsq(truth = percent_pos_test, .pred)
+log10VL_testpos_metrics <- full_join(rmse, rsq)
+
+saveRDS(log10VL_testpos_metrics, here("data/modeling_data/metrics/log10VL_testpos_performance.RDS"))
+
+log10VL_testpos_metrics
+
+```
+
+## Plot actual value vs predicted value
+
+```{r}
+aug_test %>% ggplot(aes(percent_pos_test, .pred)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+ggsave(here("data/modeling_data/metrics/log10VL_testpos_predict.png"))
+```
+
+## Plot residual values
+
+```{r}
+aug_residual <- aug_test %>% mutate(residual = percent_pos_test - .pred)
+aug_residual %>% ggplot(aes(.pred, residual)) +
+  geom_point() 
+  
+ggsave(here("data/modeling_data/metrics/log10VL_testpos_residual.png"))
+```
+
+## Final fit on test data, then on test dates
+
+```{r}
+#testing data
+fit_test_data <- workflow_testpos %>% 
+  fit(data = test_data)
+
+aug_test <- augment(fit_test_data, test_data)
+aug_test %>% select(percent_pos_test, .pred)
+
+rmse <- aug_test %>% rmse(truth = percent_pos_test, .pred)
+rsq <- aug_test %>% rsq(truth = percent_pos_test, .pred)
+test_metrics <- full_join(rmse, rsq)
+
+test_metrics
+```
+
+```{r}
+#testing dates
+fit_test_dates <- workflow_testpos %>% 
+  fit(data = test_dates)
+
+aug_test_dates <- augment(fit_test_dates, test_dates)
+aug_test_dates %>% select(percent_pos_test, .pred)
+
+rmse <- aug_test_dates %>% rmse(truth = percent_pos_test, .pred)
+rsq <- aug_test_dates %>% rsq(truth = percent_pos_test, .pred)
+test_dates_metrics <- full_join(rmse, rsq)
+
+test_dates_metrics
+```
+
+## Plot testing dates predictions vs truth
+
+```{r}
+aug_test_dates %>% ggplot(aes(x=date)) +
+  stat_smooth(aes(y=percent_pos_test), method = "loess", span = 0.5, color = "black") +
+  stat_smooth(aes(y=.pred), method = "loess", span = 0.5)
+```
