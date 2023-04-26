@@ -22,6 +22,7 @@ library(here)
 ```{r}
 train_data <- readRDS(here("data/modeling_data/training_data.RDS"))
 test_data <- readRDS(here("data/modeling_data/testing_data.RDS"))
+test_dates <- readRDS(here("data/modeling_data/test_dates.RDS"))
 ```
 
 ## Define the model
@@ -48,7 +49,7 @@ workflow_7dma <- workflow() %>%
   add_recipe(recipe_7dma)
 ```
 
-## Create model using workflow
+## Fit model
 
 ```{r}
 set.seed(626)
@@ -61,15 +62,36 @@ tidy(fit_7dma)
 ## Use model on the training data
 
 ```{r}
-aug_test <- augment(fit_7dma, train_data)
-aug_test %>% select(case_7dma, .pred)
+aug_train <- augment(fit_7dma, train_data)
+aug_train %>% select(case_7dma, .pred)
 ```
 
-## Use RMSE and RSQ to evaluate model performance
+## Cross validation
 
 ```{r}
-rmse <- aug_test %>% rmse(truth = case_7dma, .pred)
-rsq <- aug_test %>% rsq(truth = case_7dma, .pred)
+folds <- vfold_cv(train_data, v = 5, repeats = 5, strata = case_7dma)
+
+cv_7dma <- fit_resamples(workflow_7dma, resamples = folds)
+collect_metrics(cv_7dma)
+```
+
+## Check null model
+
+```{r}
+workflow_null <- workflow() %>% 
+  add_model(null_mod) %>% 
+  add_recipe(recipe_7dma)
+
+fit_null_cv <- fit_resamples(workflow_null, resamples = folds)
+
+collect_metrics(fit_null_cv)
+```
+
+## Use RMSE and RSQ to evaluate model performance on training data
+
+```{r}
+rmse <- aug_train %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_train %>% rsq(truth = case_7dma, .pred)
 log10VL_7DMA_metrics <- full_join(rmse, rsq)
 
 saveRDS(log10VL_7DMA_metrics, here("data/modeling_data/metrics/log10VL_7DMA_performance.RDS"))
@@ -81,7 +103,7 @@ log10VL_7DMA_metrics
 ## Plot actual value vs predicted value
 
 ```{r}
-aug_test %>% ggplot(aes(case_7dma, .pred)) +
+aug_train %>% ggplot(aes(case_7dma, .pred)) +
   geom_point() +
   stat_smooth(method = "lm")
 ggsave(here("data/modeling_data/metrics/log10VL_7DMA_predict.png"))
@@ -90,9 +112,49 @@ ggsave(here("data/modeling_data/metrics/log10VL_7DMA_predict.png"))
 ## Plot residual values
 
 ```{r}
-aug_residual <- aug_test %>% mutate(residual = case_7dma - .pred)
+aug_train <- aug_test %>% mutate(residual = case_7dma - .pred)
 aug_residual %>% ggplot(aes(.pred, residual)) +
   geom_point() 
   
 ggsave(here("data/modeling_data/metrics/log10VL_7DMA_residual.png"))
+```
+
+## Final fit on test data, then on test dates
+
+```{r}
+#testing data
+fit_test_data <- workflow_7dma %>% 
+  fit(data = test_data)
+
+aug_test <- augment(fit_test_data, test_data)
+aug_test %>% select(case_7dma, .pred)
+
+rmse <- aug_test %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test %>% rsq(truth = case_7dma, .pred)
+test_metrics <- full_join(rmse, rsq)
+
+test_metrics
+```
+
+```{r}
+#testing dates
+fit_test_dates <- workflow_7dma %>% 
+  fit(data = test_dates)
+
+aug_test_dates <- augment(fit_test_dates, test_dates)
+aug_test_dates %>% select(case_7dma, .pred)
+
+rmse <- aug_test_dates %>% rmse(truth = case_7dma, .pred)
+rsq <- aug_test_dates %>% rsq(truth = case_7dma, .pred)
+test_dates_metrics <- full_join(rmse, rsq)
+
+test_dates_metrics
+```
+
+## Plot testing dates predictions vs truth
+
+```{r}
+aug_test_dates %>% ggplot(aes(x=date)) +
+   stat_smooth(aes(y=case_7dma), method = "loess", span = 0.5, color = "black") +
+  stat_smooth(aes(y=.pred), method = "loess", span = 0.5)
 ```

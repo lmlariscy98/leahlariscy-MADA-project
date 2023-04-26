@@ -28,6 +28,6 @@ Each file ending in "model.Rmd" runs a script that fits and evaluates a model fo
 
 ### Manuscript
 
-To look at the manuscript file, please go to `products` \> `manuscript` \> `Manuscript.html` and download the .html file. I will change this back to a .docx file in the future, but for editing purposes I will have it saved as a .html.
+To look at the manuscript file, go to `products` \> `manuscript` \> `Manuscript.qmd` and render the .docx file.
 
-To reproduce the `Manuscript.qmd`, you will first need to run `processing.qmd` and `exploratory_analysis.qmd`. This will allow you to produce the tables and figures associated with the manuscript.
+To successfully reproduce the `Manuscript.qmd`, you will first need to run `processing.qmd`, `exploratory_analysis.qmd`, `data_splitting.Rmd`, and the modeling scripts. This will allow you to produce the tables and figures associated with the manuscript.

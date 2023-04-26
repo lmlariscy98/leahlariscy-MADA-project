@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Leah Lariscy">
-<meta name="dcterms.date" content="2023-04-18">
+<meta name="dcterms.date" content="2023-04-25">
 
 <title>Wastewater Surveillance for SARS-CoV-2 Data Analysis Project</title>
 <style>
@@ -85,7 +85,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 18, 2023</p>
+      <p class="date">April 25, 2023</p>
     </div>
   </div>
   
@@ -107,8 +107,8 @@ div.csl-indent {
 <h1 data-number="2"><span class="header-section-number">2</span> Introduction</h1>
 <section id="general-background-information" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="general-background-information"><span class="header-section-number">2.1</span> General Background Information</h2>
-<p>Paragraph 1: Impact of COVID-19 on public health, clinical case under-reporting</p>
-<p>Paragraph 2: Wastewater surveillance is possible because of excretory functions and stability of viral particles in wastewater, surveillance prevalence and correlations with clinical case data</p>
+<p>At the time of writing it has been three years since the COVID-19 Pandemic was declared, followed by a lockdown across the globe. To date, the World Health Organization reports over 760 million confirmed cases and 6.9 million deaths globally <span class="citation" data-cites="WHOCoronavirusCOVID19">(<a href="#ref-WHOCoronavirusCOVID19" role="doc-biblioref"><em><span>WHO Coronavirus</span> (<span>COVID-19</span>) <span>Dashboard</span></em>, n.d.</a>)</span>. The causative agent, severe acute respiratory syndrome coronavirus-2 (SARS-CoV-2), is a positive-sense single-stranded RNA zoonotic virus that infects cells via its spike proteins or “crowns” <span class="citation" data-cites="vkovskiCoronavirusBiologyReplication2021">(<a href="#ref-vkovskiCoronavirusBiologyReplication2021" role="doc-biblioref">V’kovski, Kratzel, Steiner, Stalder, &amp; Thiel, 2021</a>)</span>. When infected by this airborne pathogen, people report experiencing a wide range of mild to severe symptoms, including shortness of breath, cough, head and body aches, and loss of taste or smell. Older adults and others with underlying issues are at higher risk of experiencing more severe outcomes, including death <span class="citation" data-cites="COVID19YourHealth2020">(<a href="#ref-COVID19YourHealth2020" role="doc-biblioref"><span>“<span>COVID-19</span> and <span>Your Health</span>,”</span> 2020</a>)</span>. However, long-term effects of COVID-19 on the body are not well understood yet and it may be years before enough research has been done to well-characterize these impacts. The effects of this pandemic have been far-reaching, with influence practically in every aspect of society, indicating a need to keep a close eye on this infectious disease. However, as the pandemic progresses, clinical reporting continues to dwindle, leaving researchers needing a better means of collecting data on the spread of the virus.</p>
+<p>Early on in the pandemic, wastewater-based epidemiology (WBE) was identified as a promising method for detection of SARS-CoV-2 in a population. This is due to the ability of SARS-CoV-2 particles to shed from the body during and after infection through excretory functions, namely stool production <span class="citation" data-cites="wuProlongedPresenceSARSCoV22020">(<a href="#ref-wuProlongedPresenceSARSCoV22020" role="doc-biblioref">Wu et al., 2020</a>)</span>. Viral particles in wastewater are able to be detected via Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) by amplification of universally-conserved gene targets on the SARS-CoV-2 genome <span class="citation" data-cites="ahmedFirstConfirmedDetection2020">(<a href="#ref-ahmedFirstConfirmedDetection2020" role="doc-biblioref">Ahmed et al., 2020</a>)</span>. The use of universal targets allows for the detection of the virus regardless of what variant is present. As of writing, over 4,000 sites worldwide have contributed to wastewater monitoring of SARS-CoV-2 <span class="citation" data-cites="COVIDPoops19">(<a href="#ref-COVIDPoops19" role="doc-biblioref"><em><span>COVIDPoops19</span></em>, n.d.</a>)</span>. Not only is WBE an effective way of detecting viral presence, but quantification of wastewater viral load has been shown to correlate strongly with COVID-19 clinical cases when reporting efforts were strong, indicating the potential for it to be used as an alternative disease monitoring method.</p>
 <p>Paragraph 3: Surveillance program background. Aims, County-level parallel analysis of wastewater surveillance data and reported clinical cases</p>
 </section>
 <section id="description-of-data-and-data-source" class="level2" data-number="2.2">
@@ -168,11 +168,28 @@ div.csl-indent {
 </section>
 <section id="statistical-analysis" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="statistical-analysis"><span class="header-section-number">3.3</span> Statistical analysis</h2>
+<p>Through exploration of time series and wastewater-clinical correlations, prominent relationships were identified for further analysis. Wastewater variables were used to train linear regression models to predict clinical observations. Model performance metrics (RSQ and RMSE) were assessed against each other and against a null model. Cross-validation was used to validate performances. The best model was then determined and used to predict values in a new set of data.</p>
 <div style="page-break-after: always;"></div>
 </section>
 </section>
 <section id="results" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Results</h1>
+<section id="time-series-analysis" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="time-series-analysis"><span class="header-section-number">4.1</span> Time-series analysis</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../figures/exploratory/covariate/log10VL_time.png" class="img-fluid figure-img" width="1094"></p>
+<p></p><figcaption class="figure-caption">Figure 1. Wastewater viral load time-series</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="correlation-analysis" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="correlation-analysis"><span class="header-section-number">4.2</span> Correlation analysis</h2>
+<p>Two wastewater and two clinical case metrics were identified as features of interest during exploratory analysis steps where stronger wastewater-clinical correlations were observed between these variables than in others. These include wastewater viral load, wastewater assay positivity rate, clinical case seven-day moving average, and test administration positivity rate (Table 1).</p>
 <div class="cell">
 <div class="cell-output-display">
 
@@ -190,11 +207,11 @@ div.csl-indent {
 </tr>
 <tr>
 <td class="rowlabel">Mean (SD)</td>
-<td>12.6 (0.719)</td>
+<td>13.7 (0.807)</td>
 </tr>
 <tr>
 <td class="rowlabel lastrow">Median [Min, Max]</td>
-<td class="lastrow">12.6 [11.0, 13.9]</td>
+<td class="lastrow">13.9 [12.1, 15.2]</td>
 </tr>
 <tr>
 <td class="rowlabel firstrow">Assay Positivity</td>
@@ -206,7 +223,7 @@ div.csl-indent {
 </tr>
 <tr>
 <td class="rowlabel lastrow">Median [Min, Max]</td>
-<td class="lastrow">39.4 [0, 99.1]</td>
+<td class="lastrow">39.3 [0, 99.1]</td>
 </tr>
 <tr>
 <td class="rowlabel firstrow">Clinical Case Seven-Day Moving Average</td>
@@ -232,54 +249,36 @@ div.csl-indent {
 <td class="rowlabel lastrow">Median [Min, Max]</td>
 <td class="lastrow">25.0 [0, 365]</td>
 </tr>
+<tr>
+<td class="rowlabel firstrow">PCR Test Positivity</td>
+<td class="firstrow"></td>
+</tr>
+<tr>
+<td class="rowlabel">Mean (SD)</td>
+<td>10.3 (9.16)</td>
+</tr>
+<tr>
+<td class="rowlabel lastrow">Median [Min, Max]</td>
+<td class="lastrow">7.16 [0, 40.6]</td>
+</tr>
 </tbody>
 </table>
 </div>
+<p>Table 1. Statistics on clinical and wastewater variables of interest</p>
 </div>
-</div>
-<div id="tbl-summarytable" class="cell tbl-parent quarto-layout-panel anchored" data-tbl-cap="Data summary table.">
-
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/7DMA_histo.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Distribution of recorded seven-day moving average for each day</figcaption><p></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/total_copies_histo.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Distribution of viral load per sample collection per target</figcaption><p></p>
-</figure>
-</div>
-<div class="cell">
-
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/7DMA_time_plot.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Clinical case seven-day moving average over time</figcaption><p></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/avg_total_copies_time.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Wastewater viral load over time</figcaption><p></p>
-</figure>
-</div>
-<section id="basic-statistical-analysis" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="basic-statistical-analysis"><span class="header-section-number">4.1</span> Basic statistical analysis</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/total_copies_avg_vs_7DMA.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Linear regression of viral load vs case seven-day moving average</figcaption><p></p>
-</figure>
 </div>
 </section>
-<section id="full-analysis" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="full-analysis"><span class="header-section-number">4.2</span> Full analysis</h2>
-<div id="tbl-resulttable2" class="cell tbl-parent quarto-layout-panel anchored" data-tbl-cap="Linear model fit table.">
-
+<section id="model-analysis" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="model-analysis"><span class="header-section-number">4.3</span> Model analysis</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../figures/modeling/assaypos_7dma.png" class="img-fluid figure-img" width="1094"></p>
+<p></p><figcaption class="figure-caption">Figure 1. Observed Clinical Cases vs Wastewater Predictions</figcaption><p></p>
+</figure>
+</div>
+</div>
 </div>
 <div style="page-break-after: always;"></div>
 </section>
@@ -297,10 +296,6 @@ div.csl-indent {
 <section id="conclusions" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="conclusions"><span class="header-section-number">5.3</span> Conclusions</h2>
 <p><em>What are the main take-home messages?</em></p>
-<p><em>Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end</em></p>
-<p>This paper <span class="citation" data-cites="leek2015">(<a href="#ref-leek2015" role="doc-biblioref"><strong>leek2015?</strong></a>)</span> discusses types of analyses.</p>
-<p>These papers <span class="citation" data-cites="mckay2020 mckay2020a">(<a href="#ref-mckay2020" role="doc-biblioref"><strong>mckay2020?</strong></a>; <a href="#ref-mckay2020a" role="doc-biblioref"><strong>mckay2020a?</strong></a>)</span> are good examples of papers published using a fully reproducible setup similar to the one shown in this template.</p>
-<p>Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal <a href="https://www.zotero.org/styles">are available</a>. You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word <code>references.bib</code> but giving it a more descriptive name is probably better.</p>
 <div style="page-break-after: always;"></div>
 </section>
 </section>
@@ -310,8 +305,26 @@ div.csl-indent {
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">6 References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="doc-bibliography">
+<div id="ref-ahmedFirstConfirmedDetection2020" class="csl-entry" role="doc-biblioentry">
+Ahmed, W., Angel, N., Edson, J., Bibby, K., Bivins, A., O’Brien, J. W., … Mueller, J. F. (2020). First confirmed detection of <span>SARS-CoV-2</span> in untreated wastewater in <span>Australia</span>: <span>A</span> proof of concept for the wastewater surveillance of <span>COVID-19</span> in the community. <em>Science of The Total Environment</em>, <em>728</em>, 138764. <a href="https://doi.org/10.1016/j.scitotenv.2020.138764">https://doi.org/10.1016/j.scitotenv.2020.138764</a>
+</div>
+<div id="ref-COVID19YourHealth2020" class="csl-entry" role="doc-biblioentry">
+<span>COVID-19</span> and <span>Your Health</span>. (2020). https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html.
+</div>
 <div id="ref-COVID19StatusReport" class="csl-entry" role="doc-biblioentry">
 <span>COVID-19 Status Report</span>. (n.d.). https://dph.georgia.gov/covid-19-status-report.
+</div>
+<div id="ref-COVIDPoops19" class="csl-entry" role="doc-biblioentry">
+<em><span>COVIDPoops19</span></em>. (n.d.). https://www.arcgis.com/apps/dashboards/c778145ea5bb4daeb58d31afee389082.
+</div>
+<div id="ref-vkovskiCoronavirusBiologyReplication2021" class="csl-entry" role="doc-biblioentry">
+V’kovski, P., Kratzel, A., Steiner, S., Stalder, H., &amp; Thiel, V. (2021). Coronavirus biology and replication: Implications for <span>SARS-CoV-2</span>. <em>Nature Reviews Microbiology</em>, <em>19</em>(3), 155–170. <a href="https://doi.org/10.1038/s41579-020-00468-6">https://doi.org/10.1038/s41579-020-00468-6</a>
+</div>
+<div id="ref-WHOCoronavirusCOVID19" class="csl-entry" role="doc-biblioentry">
+<em><span>WHO Coronavirus</span> (<span>COVID-19</span>) <span>Dashboard</span></em>. (n.d.). https://covid19.who.int.
+</div>
+<div id="ref-wuProlongedPresenceSARSCoV22020" class="csl-entry" role="doc-biblioentry">
+Wu, Y., Guo, C., Tang, L., Hong, Z., Zhou, J., Dong, X., … Huang, X. (2020). Prolonged presence of <span>SARS-CoV-2</span> viral <span>RNA</span> in faecal samples. <em>The Lancet Gastroenterology &amp; Hepatology</em>, <em>5</em>(5), 434–435. <a href="https://doi.org/10.1016/S2468-1253(20)30083-2">https://doi.org/10.1016/S2468-1253(20)30083-2</a>
 </div>
 </div></section></div></main>
 <!-- /main column -->

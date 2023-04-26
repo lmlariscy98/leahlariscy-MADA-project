@@ -4,7 +4,7 @@ subtitle: ""
 author: Leah Lariscy
 date: "`r Sys.Date()`"
 format:
-  html:
+  docx:
     toc: false
     number-sections: true
     number-depth: 2
@@ -31,9 +31,9 @@ Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causi
 
 ## General Background Information
 
-Paragraph 1: Impact of COVID-19 on public health, clinical case under-reporting
+At the time of writing it has been three years since the COVID-19 Pandemic was declared, followed by a lockdown across the globe. To date, the World Health Organization reports over 760 million confirmed cases and 6.9 million deaths globally [@WHOCoronavirusCOVID19]. The causative agent, severe acute respiratory syndrome coronavirus-2 (SARS-CoV-2), is a positive-sense single-stranded RNA zoonotic virus that infects cells via its spike proteins or "crowns" [@vkovskiCoronavirusBiologyReplication2021]. When infected by this airborne pathogen, people report experiencing a wide range of mild to severe symptoms, including shortness of breath, cough, head and body aches, and loss of taste or smell. Older adults and others with underlying issues are at higher risk of experiencing more severe outcomes, including death [@COVID19YourHealth2020]. However, long-term effects of COVID-19 on the body are not well understood yet and it may be years before enough research has been done to well-characterize these impacts. The effects of this pandemic have been far-reaching, with influence practically in every aspect of society, indicating a need to keep a close eye on this infectious disease. However, as the pandemic progresses, clinical reporting continues to dwindle, leaving researchers needing a better means of collecting data on the spread of the virus.
 
-Paragraph 2: Wastewater surveillance is possible because of excretory functions and stability of viral particles in wastewater, surveillance prevalence and correlations with clinical case data
+Early on in the pandemic, wastewater-based epidemiology (WBE) was identified as a promising method for detection of SARS-CoV-2 in a population. This is due to the ability of SARS-CoV-2 particles to shed from the body during and after infection through excretory functions, namely stool production [@wuProlongedPresenceSARSCoV22020]. Viral particles in wastewater are able to be detected via Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) by amplification of universally-conserved gene targets on the SARS-CoV-2 genome [@ahmedFirstConfirmedDetection2020]. The use of universal targets allows for the detection of the virus regardless of what variant is present. As of writing, over 4,000 sites worldwide have contributed to wastewater monitoring of SARS-CoV-2 [@COVIDPoops19]. Not only is WBE an effective way of detecting viral presence, but quantification of wastewater viral load has been shown to correlate strongly with COVID-19 clinical cases when reporting efforts were strong, indicating the potential for it to be used as an alternative disease monitoring method.
 
 Paragraph 3: Surveillance program background. Aims, County-level parallel analysis of wastewater surveillance data and reported clinical cases
 
@@ -93,7 +93,7 @@ Of the downloaded Georgia DPH data, the data set containing positive case counts
 
 ## Statistical analysis
 
-Through exploration of time series and wastewater-clinical correlations, prominent relationships were identified for further analysis. Wastewater variables were used to train linear regression models to predict clinical observations. Model performance metrics (RSQ and RMSE) were assessed against each other and against a null model. Cross-validation was used to validate performances. The best model was then determined and used to predict values in a new set of data.
+Through exploration of time series and wastewater-clinical correlations, prominent relationships were identified for further analysis. This also allowed for identification of an appropriate data split, whereby earlier observations were used to predict later ones. Wastewater variables were then used to train single-variate linear regression models to predict clinical observations. Multi-variate wastewater models were also created in the same manor to predict clinical observations. Model performance metrics (RSQ and RMSE) were assessed against each other and against a null model. Cross-validation was used to validate performances. The best model was then determined and used to predict values in data that was not used for training.
 
 {{< pagebreak >}}
 
@@ -101,19 +101,47 @@ Through exploration of time series and wastewater-clinical correlations, promine
 
 ## Time-series analysis
 
-## Correlation analysis
+Comparison of wastewater and clinical variable time-series showed that these variables, although independent of one another, follow the same trends over time (Figures 1 & 2, Supplementary Figures). However, this changes in the time-series of administered clinical tests after the first few months of 2022 where there is nearly a complete drop-off in testing (Figure 3). This observation led to the decision to train linear regression models on data collected prior to February 28, 2022 and predict data collected after this date.
 
-Two wastewater and two clinical case metrics were identified as features of interest during exploratory analysis steps where stronger wastewater-clinical correlations were observed between these variables than in others. These include wastewater viral load, wastewater assay positivity rate, clinical case seven-day moving average, and test administration positivity rate (Table 1).
-
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, fig.cap="Table 1. Statistics on clinical and wastewater variables of interest"}
 
 readRDS(here("results/manuscript_table1.rds"))
+
+```
+
+```{r, echo=FALSE, message=FALSE, fig.cap="Figure 1. Wastewater viral load time-series"}
+
+knitr::include_graphics(here("figures/exploratory/covariate/percent_pos_time_plot.png"))
+```
+
+```{r,  echo=FALSE, message=FALSE, fig.cap="Figure 2. Clinical case 7-day moving average time-series"}
+
+knitr::include_graphics(here("figures/exploratory/covariate/7DMA_time_plot.png"))
+```
+
+```{r, echo=FALSE, message=FALSE, fig.cap="Figure 3. Daily COVID-19 tests administered time-series"}
+knitr::include_graphics(here("figures/exploratory/covariate/test_admin_time.png"))
+```
+
+## Correlation analysis
+
+Two wastewater and two clinical case metrics were identified as features of interest during exploratory analysis steps where stronger wastewater-clinical correlations were observed between these variables than in others. These include wastewater viral load, wastewater assay positivity rate, clinical case seven-day moving average, and clinical test administration positivity rate (Table 1). Of these correlations, the strongest were observed when wastewater assay positivity was included as opposed to viral load (Figures 4 & 5, Supplementary Figures). Although this is true, linear regression models were still trained using both viral load and assay positivity.
+
+```{r, echo=FALSE, message=FALSE, fig.cap="Figure 4. Wastewater qPCR assay positivity vs clinical case 7-day moving average"}
+
+knitr::include_graphics(here("figures/exploratory/covariate/assaypos_vs_7DMA.png"))
+```
+
+```{r, echo=FALSE, message=FALSE, fig.cap="Figure 5. Wastewater qPCR assay positivity vs clinical test positivity"}
+
+knitr::include_graphics(here("figures/exploratory/covariate/assaypos_testpos.png"))
 ```
 
 ## Model analysis
 
-```{r, echo=FALSE, fig.cap="Observed Clinical Cases vs Wastewater Predictions"}
-include_graphics(here("figures/modeling/assaypos_7dma.png"))
+```{r, echo=FALSE, fig.cap="Figure 6. Observed Clinical Cases vs Wastewater Predictions"}
+
+knitr::include_graphics(here("figures/modeling/assaypos_7dma.png"))
 ```
 
 {{< pagebreak >}}

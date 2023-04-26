@@ -88,9 +88,6 @@ knitr::include_graphics(here("results","height_weight.png"))
 
 # Discussion
 
-Any additional discussion regarding the supplementary material/findings.
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
 
 {{< pagebreak >}}
 

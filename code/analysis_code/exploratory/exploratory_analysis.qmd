@@ -146,7 +146,8 @@ Again with the bimodal distribution, even more so this time.
 ```{r, message=FALSE}
 data_clean %>% 
   ggplot(aes(x = date, y = case_7dma)) +
-  geom_line(size =1.5, color = '#4c005c') +
+  stat_smooth(size =1.5, color = '#4c005c', span = .1) +
+  geom_point(color = '#4c005c') +
   xlab(label = "Date") +
   ylab(label = "Clinical Case 7-Day Moving Average") +
   theme_light()
@@ -212,7 +213,8 @@ ggsave(here("figures/exploratory/covariate/log10VL_time.png"))
 ```{r, message=FALSE}
 data_clean %>% 
   ggplot(aes(date, pos_rate_tr)) +
-geom_line(size =1.5, color = '#634499') +
+stat_smooth(size =1.5, color = '#634499',span = .1 ) +
+  geom_point(color = "#634499") +
   xlab(label = "Date") +
   ylab(label = "Percent Positive N1 & N2 assays") +
   theme_light()
@@ -225,7 +227,10 @@ ggsave(here("figures/exploratory/covariate/percent_pos_time_plot.png"))
 
 ```{r}
 data_clean %>% ggplot(aes(date, test_admin)) +
-  geom_line(size = 1.5) +
+  stat_smooth(size = 1.5, span = .1, color = "#2bcdef" ) +
+  geom_point(color = "#2bcdef") +
+    xlab(label = "Date") +
+  ylab(label = "Daily Tests Administered") +
   theme_light()
 
 ggsave(here("figures/exploratory/covariate/test_admin_time.png"))
@@ -507,8 +512,8 @@ RSQ is low across all data sets, but highest in earlier dates than in full data 
 #full dataset
 data_clean %>% 
   ggplot(aes(pos_rate_tr,percent_pos_test)) +
-  geom_point() +
-  stat_poly_line() +
+ geom_point(color = "#80256D") +
+  stat_poly_line(color = "#80256D") +
   stat_poly_eq() +
   xlab(label = "qPCR assay positivity") +
   ylab(label = "PCR test positivity") +
