@@ -1,0 +1,189 @@
+# Overview
+
+Title of project: Wastewater Surveillance for SARS-CoV-2 Data Analysis Project
+
+Name of project author(s): Leah Lariscy
+
+Name of project reviewer: Connor Ross
+
+
+
+## Background, Context and Motivation
+How well is the context of the project described? Is a comprehensive background, including summary of previous/related work given? Is the project well placed into the context of existing work (including proper referencing of existing work). Is it clear why the project was undertaken and what new information it hopes to provide?
+
+### Feedback and Comments
+
+Background and introduction as well as the data sources section were very well written and provided the reader adequate information to understand the project and the context of the existing work
+
+### Summary assessment (PICK ONE, DELETE THE OTHERS)
+
+* strong contextualization and motivation
+
+
+## Question description
+How well and clear are the question(s)/hypotheses the project aims to address described? Is it clear how the questions relate to the data?
+
+
+### Feedback and Comments
+
+Question(s)/hypotheses that the author posed was clear and related to the dataset. 
+
+### Summary assessment
+
+* question/hypotheses fully clear
+
+
+## Data description
+How well is the data overall described? Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is? 
+
+### Feedback and Comments
+
+The data and the methods from which it was collected and used are well described and give a great understanding of the context and direction of the project. Further, it was clear what the overall variables of interests were.
+
+### Summary assessment
+
+* source and overall structure of data well explained
+
+
+## Data wrangling and exploratory analysis
+How well is the data cleaned/processed and explored? Are all steps reasonable and well explained? Are alternatives discussed and considered? Are meaningful exploratory results shown (e.g. in the supplementary materials)?
+
+### Feedback and Comments
+
+The data was very well cleaned and formatted for a meaningful analysis. The comments provided in the processing code was extremely useful to understand the authors thought process behind the decisions that were made while cleaning. 
+
+### Summary assessment
+
+* essentially no weaknesses in wrangling and exploratory component
+
+
+
+## Appropriateness of Analysis
+Were the analysis methods appropriate for the data? Was the analysis done properly? Were different components of the analysis (e.g. performance measure, variable selection, data pre-processing, model evaluation) done in the best way possible and explained well?
+
+### Feedback and Comments
+
+The analysis methods were appropriate for the data and appear to have been performed properly without errors. Performance measures were provided in the analysis code in the built models and explained the results well. 
+
+### Summary assessment
+
+* strong and reasonable analysis
+
+## Presentation
+How well are results presented? Are tables and figures easy to read and understand? Are the main figures/tables publication level quality? 
+
+### Feedback and Comments
+
+I really enjoyed the use of plots/figures that the author generated. It made their results extremely clear and provided information needed to make an informed determination as to the results of the analysis conducted. Plots were very clean and well formatted. A true example of an idea publishable figure for manuscript. 
+
+### Summary assessment
+
+* results are very well presented
+
+
+## Discussion/Conclusions
+Are the study findings properly discussed? Are strengths and limitations acknowledged? Are findings interpreted properly?
+
+### Feedback and Comments
+
+Discussion and conclusion statements were partly missing from the final manuscript and the manuscipt qmd, however, the author did well covering aspects of these sections in other areas of the document. Completion of sections 5 through 5.3 is needed.
+
+### Summary assessment
+
+* minor parts wrong, missing or unclear
+
+
+## Further comments
+
+Awesome job on your analysis! I'm especially impressed with your plots that you generated! Very high quality!
+
+
+# Overall project content evaluation
+Evaluate overall features of the project  by filling in the sections below.
+
+
+## Structure
+Is the project well structured? Are files in well labeled folders? Do files have reasonable names? Are all "junk" files not needed for analysis/reproduction removed? By just looking at files and folders, can you get an idea of how things fit together?
+
+### Feedback and Comments
+
+The project was very well organized. Everything was easy to find and the README.md file explained everything perfectly. 
+
+### Summary assessment
+
+* well structured
+
+
+## Documentation 
+How well is the project documented? Are you able to understand each step of the whole analysis, each decision that was made, and each line of code? Is enough information provided as comments in code or as part of Rmd files? 
+
+### Feedback and Comments
+
+Yes, the commentary in your code/analysis documents were very clear and provided excellent explainations for the decisions you made.
+
+### Summary assessment
+
+* fully and well documented
+
+
+
+## Reproducibility
+Are all results fully reproducible? Is documentation provided which clearly explains how to reproduce things, and does it work without the need for any manual intervention? Are you able to re-run the whole analysis without having to do manual interventions/edits?
+
+### Feedback and Comments
+
+Results are fully reproducible, however, there were some minor errors in code blocking a fully automated 'run-all'. This, however, did not impact the significant outputs or the final product. Please see errors and files below:
+
+processing.qmd (line 512):
+Error in table1(~log10_VL + pos_rate_tr + case_7dma + pcr_pos + percent_pos_test,  : 
+  could not find function "table1"
+  
+2_log10VL_7DMA_model.Rmd (line 81):
+Error in is_model_spec(spec) : object 'null_mod' not found
+
+2_log10VL_7DMA_model.Rmd (line 115):
+Error in mutate(., residual = case_7dma - .pred) : 
+  object 'aug_test' not found
+  
+4_AssayPos_TestPos_model.Rmd (line 81):
+Error in is_model_spec(spec) : object 'null_mod' not found
+
+4_AssayPos_TestPos_model.Rmd (line 182):
+Error in `ggsave()`:
+! `filename` has no file extension and `device` is "NULL".
+Backtrace:
+ 1. ggplot2::ggsave(here("figures/modeling/assaypos_7dma."))
+ 
+6_AssayPos_VL_7DMA_model.Rmd (line 157):
+Error: Incomplete expression: aug_full %>% ggplot(aes(x=date)) +
+  stat_smooth(aes(y=case_7dma), method = "loess", span = 0.1, color = "black", fill = "black") +
+  stat_smooth(aes(y=.pred), method = "loess", span = 0.1, color = "blue", fill = "blue") +
+  theme_light() +
+
+
+### Summary assessment
+
+* fully reproducible without issues
+
+
+## Thoroughness
+How thorough was the overall study? Were alternatives (e.g. different ways of processing the data or different models) considered? Were alternatives discussed? Were the questions/hypotheses fully and thoroughly addressed?
+
+### Feedback and Comments
+
+I could definitely see were you were going with this and way you made  the decisions that you made. Don't forget to complete the discussion sections of your manuscript!
+
+### Summary assessment
+
+* decent level of thoroughness
+
+
+
+## Further comments
+
+I really enjoyed the use of plots/figures that the author generated. It made their results extremely clear and provided information needed to make an informed determination as to the results of the analysis conducted. Plots were very clean and well formatted. A true example of an idea publishable figure for manuscript.
+
+
+
+
+
