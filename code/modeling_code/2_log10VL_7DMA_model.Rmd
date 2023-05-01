@@ -72,7 +72,9 @@ aug_train %>% select(case_7dma, .pred)
 folds <- vfold_cv(train_data, v = 5, repeats = 5, strata = case_7dma)
 
 cv_7dma <- fit_resamples(workflow_7dma, resamples = folds)
-collect_metrics(cv_7dma)
+cv_7dma_metrics <- collect_metrics(cv_7dma)
+
+saveRDS(cv_7dma_metrics, here("figures/modeling/cv_7dma_metrics.rds"))
 ```
 
 ## Check null model
@@ -112,7 +114,7 @@ ggsave(here("data/modeling_data/metrics/log10VL_7DMA_predict.png"))
 ## Plot residual values
 
 ```{r}
-aug_train <- aug_test %>% mutate(residual = case_7dma - .pred)
+aug_residual <- aug_train %>% mutate(residual = case_7dma - .pred)
 aug_residual %>% ggplot(aes(.pred, residual)) +
   geom_point() 
   
@@ -149,12 +151,14 @@ rsq <- aug_test_dates %>% rsq(truth = case_7dma, .pred)
 test_dates_metrics <- full_join(rmse, rsq)
 
 test_dates_metrics
+
+saveRDS(test_dates_metrics, here("figures/modeling/cv_7dma_test_metrics.rds"))
 ```
 
 ## Plot testing dates predictions vs truth
 
 ```{r}
 aug_test_dates %>% ggplot(aes(x=date)) +
-   stat_smooth(aes(y=case_7dma), method = "loess", span = 0.5, color = "black") +
-  stat_smooth(aes(y=.pred), method = "loess", span = 0.5)
+   stat_smooth(aes(y=case_7dma), method = "loess", span = 0.2, color = "black") +
+  stat_smooth(aes(y=.pred), method = "loess", span = 0.2)
 ```

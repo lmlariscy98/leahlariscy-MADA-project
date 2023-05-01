@@ -23,7 +23,7 @@ library(skimr)
 
 # Abstract
 
-Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent via RNA extraction, followed by Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) utilizing SARS-CoV-2 specific primers. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases.
+Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causing COVID-19, is followed by the shedding of viral particles by multiple excretory functions, including stool and urine production. Subsequently, these viral particles can be detected in wastewater influent and used to estimate the abundance of COVID-19 in a community. Wastewater-based detection methods have been utilized across the globe as an independent and parallel indicator of SARS-CoV-2 viral prevalence and, depending on community-specific factors, as a leading indicator of clinical case trends. WBE methods may also become a primary tool in understanding transmission dynamics as case under-reporting increases. Many surveillance groups have already shown wastewater viral load to be predictive of population clinical cases, so this study will evaluate the predictive power of alternative wastewater metrics. This study also aims to address the utility of SARS-CoV-2 wastewater surveillance to predict viral prevalence within a population once clinical reporting of COVID-19 declines significantly.
 
 {{< pagebreak >}}
 
@@ -35,7 +35,7 @@ At the time of writing it has been three years since the COVID-19 Pandemic was d
 
 Early on in the pandemic, wastewater-based epidemiology (WBE) was identified as a promising method for detection of SARS-CoV-2 in a population. This is due to the ability of SARS-CoV-2 particles to shed from the body during and after infection through excretory functions, namely stool production [@wuProlongedPresenceSARSCoV22020]. Viral particles in wastewater are able to be detected via Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) by amplification of universally-conserved gene targets on the SARS-CoV-2 genome [@ahmedFirstConfirmedDetection2020]. The use of universal targets allows for the detection of the virus regardless of what variant is present. As of writing, over 4,000 sites worldwide have contributed to wastewater monitoring of SARS-CoV-2 [@COVIDPoops19]. Not only is WBE an effective way of detecting viral presence, but quantification of wastewater viral load has been shown to correlate strongly with COVID-19 clinical cases when reporting efforts were strong, indicating the potential for it to be used as an alternative disease monitoring method.
 
-Paragraph 3: Surveillance program background. Aims, County-level parallel analysis of wastewater surveillance data and reported clinical cases
+Our lab
 
 ## Description of data and data source
 
@@ -53,7 +53,7 @@ COVID-19 clinical data were obtained from the Georgia Department of Public Healt
 
 ## Hypotheses to be addressed
 
-This study aims to conduct a parallel analysis between SARS-CoV-2 wastewater surveillance data and reported COVID-19 clinical case data in Athens-Clarke County, Georgia. It is expected that wastewater quantifications and reported case data will have a positive linear relationship. It is also hypothesized that certain wastewater-clinical relationships will be stronger than others, see Table 1 for variables of interest.
+This study aims to conduct a parallel analysis between SARS-CoV-2 wastewater surveillance data and reported COVID-19 clinical case data in Athens-Clarke County, Georgia. Wastewater quantifications and reported case data are expected to have a positive linear relationship and it is hypothesized that certain wastewater-clinical relationships will be stronger than others, see Table 1 for variables of interest. It is also hypothesized that correlations will begin to decrease as the time series progresses due to diminishing clinical reporting.
 
 {{< pagebreak >}}
 
@@ -77,7 +77,7 @@ Reported case and testing data were downloaded from Georgia Department of Public
 
 ### Calculating wastewater viral load
 
-Amplification standard curve equations where generated from serially diluted synthetic controls (Supplementary Table). This was done for N1 and N2 gene targets for both surveillance years because RT-qPCR methods were altered after the first year. Viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the Ct value using the appropriate standard curve equation. For reactions with no detection, concentration was set to the theoretical limit of detection (0.004 cp/uL). Data sets for each standard curve was transformed separately before being combined. After combining all qPCR data, copies per liter (cp/L) of wastewater was calculated for each technical replicate using Equation 1. Average cp/L of wastewater was determined by taking the mean of all technical replicates per sample per gene target.
+Amplification standard curve equations where generated from serially diluted synthetic controls (Supplementary Table). This was done for N1 and N2 gene targets for both surveillance years because RT-qPCR methods were altered after the first year. Viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the Ct value using the appropriate standard curve equation. For reactions with no detection, concentration was set to the theoretical limit of detection (0.004 cp/uL). Data sets for each standard curve was transformed separately before being combined. After combining all qPCR data, copies per liter (cp/L) of wastewater was calculated for each technical replicate (Equation 1). Average cp/L of wastewater was determined by taking the mean of all technical replicates per sample per gene target.
 
 INSERT EQUATION 1
 
@@ -105,11 +105,11 @@ Comparison of wastewater and clinical variable time-series showed that these var
 
 ```{r, echo=FALSE, message=FALSE, fig.cap="Table 1. Statistics on clinical and wastewater variables of interest"}
 
-readRDS(here("results/manuscript_table1.rds"))
-
+table1 <- readRDS(here("results/manuscript_table1.rds"))
+knitr::kable(table1)
 ```
 
-```{r, echo=FALSE, message=FALSE, fig.cap="Figure 1. Wastewater viral load time-series"}
+```{r, echo=FALSE, message=FALSE, fig.cap="Figure 1. Wastewater qPCR assay percent positivity time-series"}
 
 knitr::include_graphics(here("figures/exploratory/covariate/percent_pos_time_plot.png"))
 ```
@@ -139,6 +139,22 @@ knitr::include_graphics(here("figures/exploratory/covariate/assaypos_testpos.png
 
 ## Model analysis
 
+Out of each feature combination, the model predicting seven-day moving average (7DMA) by wastewater assay percent positivity (APP) had the best performance metrics, confirmed by five-fold cross validation repeated five times (Table 2, Supplementary Tables). Metrics were also stable across a set of test data prior to February 28, 2022 that was withheld from model training. Thus, the 7DMA-APP model was selected to be fit to the test dates (after February 28, 2022). The metrics of this fit were also assessed, of which RMSE did not out-perform the null model (Table 3, Supplementary Table).
+
+```{r, echo=FALSE, fig.cap= "Table 2. 7DMA-APP Performance metrics when fit to training data"}
+cv_metrics <- readRDS(here("figures/modeling/cv_7dma_metrics.rds"))
+cv_metrics <- cv_metrics %>% mutate("Metric" = .metric, "Estimator" = .estimator, "Mean" = mean, "Standard Error" = std_err) %>% 
+  select(c(Metric, Estimator, Mean, n, "Standard Error"))
+knitr::kable(cv_metrics)
+```
+
+```{r, echo=FALSE, fig.cap= "Table 3. 7DMA-APP Performance metrics when fit to dates after February 28, 2022"}
+test_metrics <- readRDS(here("figures/modeling/cv_7dma_test_metrics.rds"))
+test_metrics <- test_metrics %>% mutate("Metric" = .metric, "Estimator" = .estimator, "Estimate" = .estimate) %>% 
+  select(c(Metric, Estimator, Estimate))
+knitr::kable(test_metrics)
+```
+
 ```{r, echo=FALSE, fig.cap="Figure 6. Observed Clinical Cases vs Wastewater Predictions"}
 
 knitr::include_graphics(here("figures/modeling/assaypos_7dma.png"))
@@ -150,15 +166,15 @@ knitr::include_graphics(here("figures/modeling/assaypos_7dma.png"))
 
 ## Summary and Interpretation
 
-*Summarize what you did, what you found and what it means.*
+There were more significant correlations determined between certain variables than others, but SARS-CoV-2 wastewater surveillance metrics overall were shown to be predictive of clinical trends. These findings also suggest that qPCR assay positivity could be an alternative measure to viral load in relating wastewater data to population transmission levels of COVID-19. This is valuable because this metric involves simpler calculations and could be implemented in instances where treatment plant flow data is unavailable. It is also worth noting that wastewater-clinical correlations were higher in the beginning of the pandemic when testing efforts were more robust, whereas correlations were weaker in later dates. This, coupled with the finding that case reporting in Clarke County significantly decreased after February 2022, implicates this method of wastewater surveillance as a reliable means of understanding community disease risk when clinical data is not.
 
 ## Strengths and Limitations
 
-*Discuss what you perceive as strengths and limitations of your analysis.*
+The strength of this study lies in the ability of multiple wastewater metrics to predict clinical case data and that an alternative metric to viral load was identified. However, if improvements were to be made, more model tuning would be appropriate, seeing as certain model performance metrics did not far-excede the null model's performance. It is also worth noting that this could be in part due to the maxing out of assay percent positivity, making it difficult for the model to accurately estimate case abundance once the assay has become completely saturated.
 
 ## Conclusions
 
-*What are the main take-home messages?*
+Overall, the content of this work highlights the efficacy of these wastewater surveillance methods in capturing accurate trends in clinical cases within this county. Also, qPCR assay positivity was determined to be a slightly better predictor of clinical data than wastewater viral load. Subsequently, a linear regression model was trained on qPCR assay positivity to predict clinical seven-day moving average and was applied to a time-series of low case reporting. Due to upper-bound limitations of the model, the highest case levels were under-predicted both in the training and testing data. However, it is worth noting that during the Fall of 2022 when case reporting was low but assay positivity was high, the model estimated that case levels were much higher than what was reported.
 
 {{< pagebreak >}}
 
