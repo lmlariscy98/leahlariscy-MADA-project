@@ -140,7 +140,7 @@ aug_test_dates %>% ggplot(aes(x=date)) +
 
 ```{r}
 #full data
-fit_full <- workflow_7dma %>% 
+fit_full <- workflow_case_7dma %>%  ## Corrected workflow object from `workflow_7dma` to `workflow_case_7dma`
   fit(data = full_data)
 
 aug_full <- augment(fit_full, full_data)
