@@ -31,11 +31,9 @@ Infection by Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), causi
 
 ## General Background Information
 
-At the time of writing it has been three years since the COVID-19 Pandemic was declared, followed by a lockdown across the globe. To date, the World Health Organization reports over 760 million confirmed cases and 6.9 million deaths globally [@WHOCoronavirusCOVID19]. The causative agent, severe acute respiratory syndrome coronavirus-2 (SARS-CoV-2), is a positive-sense single-stranded RNA zoonotic virus that infects cells via its spike proteins or "crowns" [@vkovskiCoronavirusBiologyReplication2021]. When infected by this airborne pathogen, people report experiencing a wide range of mild to severe symptoms, including shortness of breath, cough, head and body aches, and loss of taste or smell. Older adults and others with underlying issues are at higher risk of experiencing more severe outcomes, including death [@COVID19YourHealth2020]. However, long-term effects of COVID-19 on the body are not well understood yet and it may be years before enough research has been done to well-characterize these impacts. The effects of this pandemic have been far-reaching, with influence practically in every aspect of society, indicating a need to keep a close eye on this infectious disease. However, as the pandemic progresses, clinical reporting continues to dwindle, leaving researchers needing a better means of collecting data on the spread of the virus.
+At the time of writing it has been three years since the COVID-19 Pandemic was declared, followed by a lockdown across the globe. To date, the World Health Organization reports over 760 million confirmed cases and 6.9 million deaths globally [@WHOCoronavirusCOVID19]. The causative agent, Severe Acute Respiratory Syndrome Coronavirus-2 (SARS-CoV-2), is a positive-sense single-stranded RNA zoonotic virus that infects cells via its spike proteins or "crowns" [@vkovskiCoronavirusBiologyReplication2021]. When infected by this airborne pathogen, people report experiencing a wide range of mild to severe symptoms, including shortness of breath, cough, head and body aches, and loss of taste or smell. Older adults and others with underlying issues are at higher risk of experiencing more severe outcomes, including death [@COVID19YourHealth2020]. However, long-term effects of COVID-19 on the body are not well understood yet and it may be years before enough research has been done to well-characterize these impacts. The effects of this pandemic have been far-reaching, with influence practically in every aspect of society, indicating a need to keep a close eye on this infectious disease. However, as the pandemic progresses, clinical reporting continues to dwindle, leaving researchers needing a better means of collecting data on the spread of the virus.
 
 Early on in the pandemic, wastewater-based epidemiology (WBE) was identified as a promising method for detection of SARS-CoV-2 in a population. This is due to the ability of SARS-CoV-2 particles to shed from the body during and after infection through excretory functions, namely stool production [@wuProlongedPresenceSARSCoV22020]. Viral particles in wastewater are able to be detected via Reverse Transcriptase Quantitative Polymerase Chain Reaction (RT-qPCR) by amplification of universally-conserved gene targets on the SARS-CoV-2 genome [@ahmedFirstConfirmedDetection2020]. The use of universal targets allows for the detection of the virus regardless of what variant is present. As of writing, over 4,000 sites worldwide have contributed to wastewater monitoring of SARS-CoV-2 [@COVIDPoops19]. Not only is WBE an effective way of detecting viral presence, but quantification of wastewater viral load has been shown to correlate strongly with COVID-19 clinical cases when reporting efforts were strong, indicating the potential for it to be used as an alternative disease monitoring method.
-
-Our lab
 
 ## Description of data and data source
 
@@ -55,15 +53,13 @@ COVID-19 clinical data were obtained from the Georgia Department of Public Healt
 
 This study aims to conduct a parallel analysis between SARS-CoV-2 wastewater surveillance data and reported COVID-19 clinical case data in Athens-Clarke County, Georgia. Wastewater quantifications and reported case data are expected to have a positive linear relationship and it is hypothesized that certain wastewater-clinical relationships will be stronger than others, see Table 1 for variables of interest. It is also hypothesized that correlations will begin to decrease as the time series progresses due to diminishing clinical reporting.
 
-{{< pagebreak >}}
-
 # Methods
 
 ## Data acquisition
 
 ### Wastewater surveillance data
 
-24-hour composite raw wastewater influent samples were collected twice-weekly from three treatment facilities in Clarke County and stored at 4°C until ready for extraction. 280 𝜇L of wastewater in replicates (n=6) was aliquoted and direct RNA extraction (Zymo Research, R2042) was performed on the same day as sample collection.Each extraction replicate was reverse transcribed and amplified using RT-qPCR and a SARS-CoV-2 specific primer-probe panel (IDT, 10006713), done in technical replicates (n=3). As part of the qPCR panel, two gene targets on the N-gene of the SARS-CoV-2 genome were used for amplification. The N1 and N2 gene targets were chosen due to their conservation across variants and act as universal detectors of the virus \[\@\]. Cycle threshold (Ct) values were then calculated for each PCR reaction, which were then used to estimate SARS-CoV-2 viral load (See Section 3.2 for more detail).
+24-hour composite raw wastewater influent samples were collected twice-weekly from three treatment facilities in Clarke County and stored at 4°C until ready for extraction. 280 𝜇L of wastewater in replicates (n=6) was aliquoted and direct RNA extraction (Zymo Research, R2042) was performed on the same day as sample collection.Each extraction replicate was reverse transcribed and amplified using RT-qPCR and a SARS-CoV-2 specific primer-probe panel (IDT, 10006713), done in technical replicates (n=3). As part of the qPCR panel, two gene targets on the N-gene of the SARS-CoV-2 genome were used for amplification. The N1 and N2 gene targets were chosen due to their conservation across variants and act as universal detectors of the virus. Cycle threshold (Ct) values were then calculated for each PCR reaction, which were then used to estimate SARS-CoV-2 viral load (See Section 3.2 for more detail).
 
 ### Wastewater treatment plant data
 
@@ -79,9 +75,19 @@ Reported case and testing data were downloaded from Georgia Department of Public
 
 Amplification standard curve equations where generated from serially diluted synthetic controls (Supplementary Table). This was done for N1 and N2 gene targets for both surveillance years because RT-qPCR methods were altered after the first year. Viral copies per microliter (cp/uL) of each PCR reaction was estimated by transforming the Ct value using the appropriate standard curve equation. For reactions with no detection, concentration was set to the theoretical limit of detection (0.004 cp/uL). Data sets for each standard curve was transformed separately before being combined. After combining all qPCR data, copies per liter (cp/L) of wastewater was calculated for each technical replicate (Equation 1). Average cp/L of wastewater was determined by taking the mean of all technical replicates per sample per gene target.
 
-INSERT EQUATION 1
+$$
+C_W=C_R*(V_Q/V_D)*(V_T/V_R)*(V_E/V_W)*(1.0*10^6uL/1L)
+$$
 
-WWTP data was then transformed by converting the flow rate from millions of gallons per day to liters per day. qPCR data was then combined with WWTP data and total viral load per sample was calculated by multiplying average copies per liter by the flow rate. Average viral load for each sample was then determined by taking the mean of the viral load for both N1 and N2 gene targets. County-level daily viral load was calculated by taking the sum of the average viral load from each of the three WWTP samples.
+*Equation 1. Viral copies per liter of wastewater (C_W) was calculated by first multiplying copies per qPCR reaction (C_R) by volume of reaction (V_Q) divided by volume of converted DNA (V_D) in the reaction, then multiplying by volume of the reverse-transcription reaction (V_R) divided by volume of RNA extract (V_R) in that reaction, then multiplying by the elution volume of the RNA extraction (V_E) divided by the total volume of wastewater input (V_W). This yields copies per microliter of raw wastewater, which is finally converted to copies per liter.*
+
+WWTP data was then transformed by converting the flow rate from millions of gallons per day to liters per day (Equation 2). qPCR data was then combined with WWTP data and total viral load per sample was calculated by multiplying average copies per liter by the flow rate. Average viral load for each sample was then determined by taking the mean of the viral load for both N1 and N2 gene targets. County-level daily viral load was calculated by taking the sum of the average viral load from each of the three WWTP samples.
+
+$$
+VL_W=C_W*V_I
+$$
+
+*Equation 2. Wastewater viral load (VL_W) was determined by multiplying viral copies per liter of wastewater (C_W) by the total daily volume of influent flow in liters (V_I).*
 
 ### Calculating wastewater qPCR assay positivity
 
@@ -94,8 +100,6 @@ Of the downloaded Georgia DPH data, the data set containing positive case counts
 ## Statistical analysis
 
 Through exploration of time series and wastewater-clinical correlations, prominent relationships were identified for further analysis. This also allowed for identification of an appropriate data split, whereby earlier observations were used to predict later ones. Wastewater variables were then used to train single-variate linear regression models to predict clinical observations. Multi-variate wastewater models were also created in the same manor to predict clinical observations. Model performance metrics (RSQ and RMSE) were assessed against each other and against a null model. Cross-validation was used to validate performances. The best model was then determined and used to predict values in data that was not used for training.
-
-{{< pagebreak >}}
 
 # Results
 
@@ -114,7 +118,7 @@ knitr::kable(table1)
 knitr::include_graphics(here("figures/exploratory/covariate/percent_pos_time_plot.png"))
 ```
 
-```{r,  echo=FALSE, message=FALSE, fig.cap="Figure 2. Clinical case 7-day moving average time-series"}
+```{r,  echo=FALSE, message=FALSE, fig.cap="Figure 2. Clinical case 7-day moving average time-series", fig.width=10, fig.height=8}
 
 knitr::include_graphics(here("figures/exploratory/covariate/7DMA_time_plot.png"))
 ```
@@ -160,7 +164,7 @@ knitr::kable(test_metrics)
 knitr::include_graphics(here("figures/modeling/assaypos_7dma.png"))
 ```
 
-{{< pagebreak >}}
+In Figure 6, 7DMA predicted by the APP model is shown in blue, whereas the reported value is shown in black. The closest predictions appear to take place towards the beginning of the time-series, whereas the gap in predicted vs actual value widens as time progresses. It also appears that in many instances of high case abundance, the predicted values are under-estimated. This is likely because at a certain point, the qPCR assays reach nearly 100% and cannot accurately estimate values above that threshold. However, it is interesting that in the Fall of 2023 when clinical cases appeared to be severely under-reported (Figure 3), cases are estimated to be nearly as high as during the prior peak during the late summer months, whereas case abundance in the reported data is seemingly much lower.
 
 # Discussion
 
@@ -170,11 +174,11 @@ There were more significant correlations determined between certain variables th
 
 ## Strengths and Limitations
 
-The strength of this study lies in the ability of multiple wastewater metrics to predict clinical case data and that an alternative metric to viral load was identified. However, if improvements were to be made, more model tuning would be appropriate, seeing as certain model performance metrics did not far-excede the null model's performance. It is also worth noting that this could be in part due to the maxing out of assay percent positivity, making it difficult for the model to accurately estimate case abundance once the assay has become completely saturated.
+The strength of this study lies in the ability of multiple wastewater metrics to predict clinical case data and that an alternative metric to viral load was identified. However, if improvements were to be made, more model tuning would be appropriate, seeing as certain model performance metrics did not far-exceed the null model's performance. It is also worth noting that this could be partially due to the maxing out of assay percent positivity, making it difficult for the model to accurately estimate case abundance once the assay has become completely saturated. Because of this, this particular model may be more useful at predicting periods of high vs low case abundance rather than trying to accurately estimate case counts. If done again, I would categorize each date in the wastewater time-series as either high, medium, or low viral abundance based on the distribution of the data, and build a categorical prediction model to predict periods of high, medium, or low case abundance.
 
 ## Conclusions
 
-Overall, the content of this work highlights the efficacy of these wastewater surveillance methods in capturing accurate trends in clinical cases within this county. Also, qPCR assay positivity was determined to be a slightly better predictor of clinical data than wastewater viral load. Subsequently, a linear regression model was trained on qPCR assay positivity to predict clinical seven-day moving average and was applied to a time-series of low case reporting. Due to upper-bound limitations of the model, the highest case levels were under-predicted both in the training and testing data. However, it is worth noting that during the Fall of 2022 when case reporting was low but assay positivity was high, the model estimated that case levels were much higher than what was reported.
+Overall, the content of this work highlights the efficacy of these wastewater surveillance methods in capturing accurate trends in clinical cases within this county. qPCR assay positivity was also determined to be a slightly better predictor of clinical data than wastewater viral load. Subsequently, a linear regression model was trained on qPCR assay positivity to predict clinical seven-day moving average and was applied to a time-series of low case reporting. Model performance metrics were better when the model was fit to the training data (prior to February 2022), but performance worsened significantly when fit to testing data (after February 2022). Due to upper-bound limitations though, the highest case levels were under-predicted both in the training and testing data. However, it is still worth noting that during the Fall of 2022 when case reporting was low but assay positivity was high, the model estimated that case levels were much higher than what was reported.
 
 {{< pagebreak >}}
 

@@ -178,6 +178,9 @@ test_full_metrics
 aug_full %>% ggplot(aes(x=date)) +
  stat_smooth(aes(y=case_7dma), method = "loess", span = 0.1, color = "black", fill = "black") +
   stat_smooth(aes(y=.pred), method = "loess", span = 0.1, color = "blue", fill = "blue") +
-  theme_light()
-  ggsave(here("figures/modeling/assaypos_7dma."))
+  theme_light() +
+  xlab(label = "Date") +
+  ylab(label = "Clinical Case 7-Day Moving Average") 
+
+  ggsave(here("figures/modeling/assaypos_7dma.png"))
 ```
